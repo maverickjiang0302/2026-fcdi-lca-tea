@@ -20,6 +20,7 @@ authors:
     affiliation: "The University of Alabama"
     email: djiang6@ua.edu
 repository-code: "https://github.com/maverickjiang0302/2026-fcdi-lca-tea"
+doi: 10.5281/zenodo.23201433
 # One license string: Zenodo's GitHub integration reads `license` as a single value (a list made release v1.0.0
 # fail). The code is MIT (LICENSE); the data are CC BY 4.0 (LICENSE-DATA), as the abstract and README state.
 license: MIT

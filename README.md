@@ -4,8 +4,9 @@ Input data and Python code behind the article *"Areal selenium productivity sets
 integrated FCDI-BES: a prospective LCA-TEA"* (Riveros, Mostofifar and Jiang, The University of Alabama; the full
 reference is added on publication).
 
-**Repository:** https://github.com/maverickjiang0302/2026-fcdi-lca-tea. **Archive:** Zenodo; every GitHub release of this repository is archived there with its own
-DOI (the Zenodo record lists the DOI of each version and the concept DOI of all versions).
+**Repository:** https://github.com/maverickjiang0302/2026-fcdi-lca-tea. **Archive:** Zenodo,
+https://doi.org/10.5281/zenodo.23201433 (concept DOI: all versions, resolving to the latest); every GitHub release is
+archived there with its own version DOI.
 
 The model couples flow-electrode capacitive deionization (FCDI) with a bio-electrochemical system (BES) that reduces
 selenium oxyanions from flue-gas desulfurization wastewater to elemental selenium, with and without a downstream

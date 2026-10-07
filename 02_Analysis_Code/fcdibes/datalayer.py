@@ -114,7 +114,7 @@ Registries (dict key -> file name; the names equal the approved mapping's new na
             superseded inputs, 01_Raw, every file of 02_Processed (result files can be combined with the public
             inventory to recover licensed factors), 03_Manuscript, 04_Figures, 00_Project_Docs, the figure package,
             the document builders, every other tool, tests/ and the project's repo files.
-            DEPOSIT_VERSION ('v06'), deposit_name(version) / deposit_dir(version) (00_Project_Docs/
+            DEPOSIT_VERSION ('v07'), deposit_name(version) / deposit_dir(version) (00_Project_Docs/
             LCA-FCDI_ZenodoDeposit_vNN, built by CODE['build_deposit'], never run in place), deposit_files() ->
             [(published path, source path, registry source)], DEPOSIT_MARKER (DEPOSIT_MANIFEST.csv at the deposit
             root): is_deposit() is True in a public clone (validation then uses its 'deposit' scope).
@@ -452,14 +452,16 @@ def si_figure_keys() -> list:
 MANUSCRIPT_VERSION = "v08"                  # v08 (2026-10-06): the owner's answers to the v07 queries (abstract wording,
                                             # citations, CRediT statement, Zenodo DOI); v07 editorial revision (Figs. 5-6
                                             # merged, Table 3 moved to SI Table S26, Water Research references, US spelling)
-SI_VERSION = "v07"                          # unchanged in v08; v06 (document revision), v05 (Phase 3) and v01-v04 stay
+SI_VERSION = "v08"                          # v08 (2026-10-06): the owner's Word edits of SI v07 and the audit fixes;
+                                            # v07 (editorial revision), v06, v05 (Phase 3) and v01-v04 stay
 _DOC_VERSIONED = dict(manuscript="LCA-FCDI_Manuscript_{v}.docx", si="LCA-FCDI_SI_{v}.docx")
 DOC_VERSIONS = dict(manuscript=("v01", "v02", "v03", "v04", "v05", "v06", "v07", MANUSCRIPT_VERSION),
-                    si=("v01", "v02", "v03", "v04", "v05", "v06", SI_VERSION))
+                    si=("v01", "v02", "v03", "v04", "v05", "v06", "v07", SI_VERSION))
 DOC = dict(
     manuscript=_DOC_VERSIONED["manuscript"].format(v=MANUSCRIPT_VERSION),
     si=_DOC_VERSIONED["si"].format(v=SI_VERSION),
-    reference_list="LCA-FCDI_Manuscript_ReferenceList_v05.json",                 # v05 (manuscript v08): cited_in updated;
+    reference_list="LCA-FCDI_Manuscript_ReferenceList_v06.json",                 # v06 (SI v08): SI cited_in updated;
+                                                                                 # v05 (manuscript v08): cited_in updated;
                                                                                  # v04 2026-10-06: structured entries, Water
                                                                                  # Research (Elsevier Harvard) style; v03: ACS
     data_dictionary="LCA-FCDI_D01-D09_Guide_DataDictionary_v02.md",              # Phase 3: D09 and the new inputs
@@ -472,6 +474,7 @@ DOC = dict(
     documents_v06="LCA-FCDI_Report_DocumentsV06_v01.md",                        # document revision v06 (2026-10-06)
     documents_v07="LCA-FCDI_Report_DocumentsV07_v01.md",                        # editorial revision v07 (2026-10-06)
     documents_v08="LCA-FCDI_Report_DocumentsV08_v01.md",                        # manuscript v08 (2026-10-06)
+    documents_si_v08="LCA-FCDI_Report_SupplementaryMaterialV08_v01.md",         # SI v08 and the release (2026-10-06)
     highlights="LCA-FCDI_Highlights_v01.docx",                                  # v08: written by the manuscript builder
                                                                                  # from the prose module's HIGHLIGHTS
     graphical_abstract="LCA-FCDI_GraphicalAbstract_v01.png",                     # owner-made asset (2026-10-06), not
@@ -484,6 +487,7 @@ DOC_LOCATION = dict(
     data_dictionary=PROJDOC_DIR, model_notes=PROJDOC_DIR, publishing=PROJDOC_DIR,
     discovery_report=PROJDOC_DIR, verification_report=PROJDOC_DIR, data_sharing=PROJDOC_DIR,
     science_revision=PROJDOC_DIR, documents_v06=PROJDOC_DIR, documents_v07=PROJDOC_DIR, documents_v08=PROJDOC_DIR,
+    documents_si_v08=PROJDOC_DIR,
     legend=DATA_DIR,
     crosswalk=MANUSCRIPT_DIR,
 )
@@ -494,6 +498,7 @@ DOC_SUPERSEDED = dict(
     reference_list_v02=("reference_list", "LCA-FCDI_Manuscript_ReferenceList_v02.json"),   # Phase 3 list; v03 adds one DOI
     reference_list_v03=("reference_list", "LCA-FCDI_Manuscript_ReferenceList_v03.json"),   # ACS strings; v04 restructures
     reference_list_v04=("reference_list", "LCA-FCDI_Manuscript_ReferenceList_v04.json"),   # v07 citations; v05 for v08
+    reference_list_v05=("reference_list", "LCA-FCDI_Manuscript_ReferenceList_v05.json"),   # manuscript v08; v06 for SI v08
     data_dictionary_v01=("data_dictionary", "LCA-FCDI_D01-D08_Guide_DataDictionary_v01.md"),
     model_notes_v01=("model_notes", "LCA-FCDI_D01-D08_Report_ModelNotes_v01.md"),
 )
@@ -538,7 +543,9 @@ REPO = dict(
 # declared_text_substitutions.csv and the project's README, pyproject, pytest.ini and environment.yml (the deposit
 # builder writes the public repository's own README, LICENSE-DATA, CITATION.cff, requirements.txt, .gitignore and
 # .gitattributes; LICENSE is the project's MIT text unchanged).
-DEPOSIT_VERSION = "v06"                   # v06 (2026-10-06, manuscript v08): CITATION.cff loadable by Zenodo (one license
+DEPOSIT_VERSION = "v07"                   # v07 (2026-10-06, SI v08): the registry constants of SI v08 and reference list
+                                          # v06; the Zenodo concept DOI in README and CITATION.cff (GitHub release v1.0.2).
+                                          # v06 (2026-10-06, manuscript v08): CITATION.cff loadable by Zenodo (one license
                                           # string, repository-code, abstract), README with the repository URL and the
                                           # revised title, the registry constants of v08 (GitHub release v1.0.1).
                                           # v05 (2026-10-06, documents v07): the registry constants of datalayer.py (figures
