@@ -1,0 +1,11 @@
+﻿impact_category,value,unit,source,source_locator,value_type,note
+Acidification,90.829936747848606,kg SO2 eq/cap/yr,FCDI-BES inputs (1).xlsx,sheet 'LCA Normalization Factors',,
+Carcinogenics,0.000052719007010974701,CTUh/cap/yr,FCDI-BES inputs (1).xlsx,sheet 'LCA Normalization Factors',,
+Ecotoxicity,11069.955476639099,CTUe/cap/yr,FCDI-BES inputs (1).xlsx,sheet 'LCA Normalization Factors',,
+Eutrophication,21.615775781114198,kg N eq/cap/yr,FCDI-BES inputs (1).xlsx,sheet 'LCA Normalization Factors',,
+Fossil fuel depletion,18820.376445169699,MJ surplus/cap/yr,FCDI-BES inputs (1).xlsx,sheet 'LCA Normalization Factors',,
+Global warming,24223.691254520701,kg CO2 eq/cap/yr,FCDI-BES inputs (1).xlsx,sheet 'LCA Normalization Factors',,
+Non carcinogenics,0.00105030629997026,CTUh/cap/yr,FCDI-BES inputs (1).xlsx,sheet 'LCA Normalization Factors',,
+Ozone depletion,0.16126709000147599,kg CFC-11 eq/cap/yr,FCDI-BES inputs (1).xlsx,sheet 'LCA Normalization Factors',,
+Respiratory effects,24.247978058101602,kg PM2.5 eq/cap/yr,FCDI-BES inputs (1).xlsx,sheet 'LCA Normalization Factors',,
+Smog,1391.9124320050801,kg O3 eq/cap/yr,FCDI-BES inputs (1).xlsx,sheet 'LCA Normalization Factors',,

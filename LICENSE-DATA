@@ -1,0 +1,34 @@
+Data license: Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright (c) 2026 Adriana Riveros, Amirhossein Mostofifar, Daqian Jiang
+The University of Alabama
+
+The data in this repository - every file under 01_Data/ - are licensed under the Creative Commons Attribution 4.0
+International License (CC BY 4.0):
+https://creativecommons.org/licenses/by/4.0/  (legal code: https://creativecommons.org/licenses/by/4.0/legalcode)
+
+You may share and adapt the data for any purpose, provided that you give appropriate credit (cite the article and
+this repository), provide a link to the license, and indicate if changes were made.
+
+The Python code under 02_Analysis_Code/ is licensed separately under the MIT License (see LICENSE).
+
+Third-party data and notes
+- ecoinvent. The life-cycle impact assessment uses the ecoinvent database v3.7 (cut-off system model; ecoinvent
+  Association). No ecoinvent data are included in this repository: neither the characterisation factors (TRACI 2.1
+  scores) of the ecoinvent datasets nor any result file from which they could be recalculated. The factor template
+  (01_Data/03_Reference/LCA-FCDI_D01_Reference_TRACIFactorsTemplate_v01.csv) and the flow dictionary
+  (01_Data/03_Reference/LCA-FCDI_D01_Reference_FlowDictionary_v01.csv) name the ecoinvent datasets used (activity, reference
+  product, location, reference unit) and carry no values; the dummy table
+  (01_Data/03_Reference/LCA-FCDI_D01_Reference_TRACIFactorsDummy_v01.csv) carries 1.0 for every factor. Users with an ecoinvent
+  licence supply the factors themselves. Credit: Wernet, G., Bauer, C., Steubing, B., Reinhard, J., Moreno-Ruiz, E.
+  and Weidema, B. (2016). The ecoinvent database version 3 (part I): overview and methodology. Int. J. Life Cycle
+  Assess. 21, 1218-1230.
+- TRACI. The impact categories and the US 2008 per-capita normalisation factors are those of TRACI 2.1 (U.S.
+  Environmental Protection Agency); the normalisation factors were transcribed from the authors' workbook.
+- Literature, vendor and measured values. Values taken from published sources, vendor catalogues and quotations are
+  cited in the source and reference columns of the CSV files (for example the benchmark treatment costs); please
+  cite those sources as well when you reuse the values. The electron partitioning (D05) was measured in the
+  41-day continuous campaign of Riveros et al., Water Res. 2026, 303, 126244, with the reactor of Riveros et al.,
+  Water Res. 2025, 271, 122844.
+- Consumer price index. The CPI-U annual averages (U.S. Bureau of Labor Statistics, series CUUR0000SA0) are public
+  data of the U.S. government.

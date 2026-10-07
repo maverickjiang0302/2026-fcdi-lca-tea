@@ -1,0 +1,76 @@
+# LCA-FCDI public repository. WHITELIST: every file is ignored except the files named below (the allow-list of
+# the data layer, datalayer.DEPOSIT, and the repository's root files). Results, figures, documents, licensed
+# data (also under another name) and caches therefore cannot be committed by accident. The code writes every
+# result into 01_Data/02_Processed/ (and run folders inside it); none is published: flow-level and scenario
+# results combined with the public inventory recover licensed factors. To publish another file, add it to the
+# allow-list and here, and run the deposit checks.
+*
+!*/
+!/.gitattributes
+!/.gitignore
+!/01_Data/03_Reference/LCA-FCDI_D01_Reference_FlowDictionary_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D01_Reference_TRACIFactorsDummy_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D01_Reference_TRACIFactorsTemplate_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D02_Reference_EquipmentGeneral_v02.csv
+!/01_Data/03_Reference/LCA-FCDI_D02_Reference_Influent_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D02_Reference_Materials_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D02_Reference_Prices_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D02_Reference_ProcessAssumptions_v03.csv
+!/01_Data/03_Reference/LCA-FCDI_D02_Reference_TEAInputs_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D02_Reference_UnitConversions_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D03_Reference_CentrifugeCatalogue_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D03_Reference_ECMixerCatalogue_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D03_Reference_PumpCatalogue_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D03_Reference_ScreenCatalogue_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D04_Reference_ElectrocultivationInventory_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D04_Reference_ForegroundProcesses_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D04_Reference_TRACINormalizationUS2008_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D05_Reference_ElectronPartitioning_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D06_Reference_ScenarioDefinitions_v03.yaml
+!/01_Data/03_Reference/LCA-FCDI_D07_Reference_SamplingSettings_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D07_Reference_UncertaintyDistributions_v03.csv
+!/01_Data/03_Reference/LCA-FCDI_D08_Reference_CPIU_v01.csv
+!/01_Data/03_Reference/LCA-FCDI_D08_Reference_LiteratureBenchmarks_v02.csv
+!/01_Data/03_Reference/LCA-FCDI_D08_Reference_SeTreatmentBenchmarks_v02.csv
+!/01_Data/03_Reference/LCA-FCDI_D09_Reference_ScaleUpLossLedger_v02.csv
+!/02_Analysis_Code/LCA-FCDI_D01-D08_RunAll.py
+!/02_Analysis_Code/fcdibes/__init__.py
+!/02_Analysis_Code/fcdibes/analysis/__init__.py
+!/02_Analysis_Code/fcdibes/analysis/_runner.py
+!/02_Analysis_Code/fcdibes/analysis/axes.py
+!/02_Analysis_Code/fcdibes/analysis/benchmarks.py
+!/02_Analysis_Code/fcdibes/analysis/conditions.py
+!/02_Analysis_Code/fcdibes/analysis/grid.py
+!/02_Analysis_Code/fcdibes/analysis/ledger.py
+!/02_Analysis_Code/fcdibes/analysis/scaling.py
+!/02_Analysis_Code/fcdibes/analysis/sensitivity.py
+!/02_Analysis_Code/fcdibes/analysis/targets.py
+!/02_Analysis_Code/fcdibes/analysis/uncertainty.py
+!/02_Analysis_Code/fcdibes/config.py
+!/02_Analysis_Code/fcdibes/correlations.py
+!/02_Analysis_Code/fcdibes/datalayer.py
+!/02_Analysis_Code/fcdibes/inventory.py
+!/02_Analysis_Code/fcdibes/io.py
+!/02_Analysis_Code/fcdibes/lca.py
+!/02_Analysis_Code/fcdibes/model.py
+!/02_Analysis_Code/fcdibes/params.py
+!/02_Analysis_Code/fcdibes/streams.py
+!/02_Analysis_Code/fcdibes/system.py
+!/02_Analysis_Code/fcdibes/tea.py
+!/02_Analysis_Code/fcdibes/unitops.py
+!/02_Analysis_Code/fcdibes/validation.py
+!/CITATION.cff
+!/DEPOSIT_MANIFEST.csv
+!/LICENSE
+!/LICENSE-DATA
+!/README.md
+!/requirements.txt
+
+# Licensed data: the ecoinvent-derived factor table and anything named after it, ignored even if named above
+**/*Ecoinvent37*
+**/*ecoinvent37*
+**/*licensed*
+
+# Caches (ignored by the first rule too; named for readers)
+__pycache__/
+*.py[cod]

@@ -1,0 +1,2 @@
+﻿equipment_type,model_name,min_flowrate_m3hr,max_flowrate_m3hr,purchase_cost_usd,power_kW,notes,source,source_locator,value_type,note
+Rotary Fine Mesh Filter Screen,ZL350*600,0.1,8,2222,0.25,Vendor catalogue; up to 8000 L/hr,Vendor catalogue; up to 8000 L/hr,,,

@@ -1,0 +1,183 @@
+# Named parameter sets for the FCDI-BES LCA/TEA model (dataset D06 of project LCA-FCDI).
+#
+# Version v03 (2026-10-05, Phase 3 science revision). Built by a script from v02 and the electron partitioning D05
+# (derive_conditions.py, quoted in the Phase-3 builder report); no value was typed by hand. Changes from v02:
+#   * base: label and source reworded, key `condition: 3V` added; its parameter values are those of v02, unchanged;
+#   * cond_2v, cond_2v_n, cond_3v_n: the other three measured operating points of Riveros et al. 2026 (Water Res. 303,
+#     126244), steady-state window days 19-41: I = Q / t, J = I / A_mem,lab, FE = FE_Se of D05, V of D05, and the
+#     removal efficiency of the integral estimator where it exists (Se-only runs), else the molar balance of D05;
+#   * lab_ideal: the base case without stack and scale-up losses (D02 ProcessAssumptions v02, group Scale-up);
+#   * nitrate_competition: relabelled as the counterfactual it is (Se + nitrate FE at the Se-only J), values unchanged;
+#   * legacy_2v: relabelled (SI only), values unchanged.
+# v01 and v02 stay in the project as superseded files and are never loaded.
+#
+# A scenario layers a small number of operating-point overrides on top of the structural parameter set in the D02
+# parameter tables (the registered versions, fcdibes/datalayer.py IN). Operating points derive from the measured
+# electron partitioning (LCA-FCDI_D05_Reference_ElectronPartitioning_v01.csv). The four measured conditions are
+# registered in datalayer.CONDITIONS with the labels 3V, 2V, 2V+N and 3V+N; 3V is the base case.
+#
+# lca_dataset_overrides pick between the two characterisation-factor variants carried in the factor table
+# (LCA-FCDI_D01_Reference_TRACIFactors*_v01.csv: the licensed table, or the public template and dummy with the same
+# rows). The dataset_id names there record provenance (which workbook a value came from), not preference; which one a
+# scenario should use is decided here.
+
+meta:
+  description: Named parameter sets for the FCDI-BES LCA/TEA model.
+  structural_basis: LCA-FCDI_D02_Reference_*_vNN.csv (the versions registered in datalayer.IN)
+  operating_point_basis: LCA-FCDI_D05_Reference_ElectronPartitioning_v01.csv
+
+scenarios:
+
+  base:
+    condition: 3V
+    label: "3 V, Se only, steady state (days 19-41): manuscript base case (= condition 3V)"
+    note: >-
+      Manuscript base case. Operating point from the corrected metafile.
+      Removal efficiency (0.8922) comes from the integral estimator on the
+      Removal-CE% sheet; the molar-balance estimator on the FE sheet gives
+      0.8977, a 0.6% spread that serves as a cross-check.
+
+      Graphite is characterised with the generic ecoinvent market activity
+      ("market for graphite"). The alternative -- graphite manufactured as a
+      lithium-ion battery anode -- describes a purified, coated, battery-grade
+      material and is a poor proxy for a bulk FCDI flow electrode; its
+      ecotoxicity score is about four orders of magnitude above the generic
+      market activity's (the values are in the licensed factor table). It is
+      retained as lci_graphite_battery_anode, which bounds the choice from above.
+    source: "Riveros et al. 2026 (Water Res. 303, 126244), steady-state window days 19-41; D05 rows '3V Se', 'steady_state_19_41d'; operating point of the corrected metafile '07-07-26 Corrected Metafile Scale-up.xlsx' :: Data and Model r40-r64 (values unchanged since v01); RE estimator: integral, metafile 'Removal-CE%' cell AI32 (0.892224, entered as 0.8922)"
+    parameter_overrides:
+      PROC:
+        FCDI-BES:
+          Voltage Applied: 3.0
+          Current: 8.955013758321858e-05
+          Current Density: 0.0410028102487264
+          Removal Efficiency: 0.8922
+          Faradaic Efficiency: 0.279578
+      # The inputs workbook was left at the 2600 m3/hr full-scale value; the
+      # pilot base case is 10 m3/hr. Scale is always set explicitly.
+      INF:
+        WW Flowrate Influent: 10.0
+    lca_dataset_overrides:
+      graphite electrode: inputs_v1
+      selenium: metafile_corrected
+
+  cond_2v:
+    inherits: base
+    condition: 2V
+    label: "2 V, Se only (condition 2V)"
+    note: >-
+      Measured operating point 2V. FE is the D05 selenium Faradaic efficiency, V the applied voltage. Current I = Q_total / t over the window and current density J = I / A_mem,lab (A_mem,lab = 0.002184 m2, the membrane area facing the channels). Removal efficiency: integral, metafile 'Removal-CE%' cell AI7.
+    source: "Riveros et al. 2026 (Water Res. 303, 126244), steady-state window days 19-41; D05 rows '2V Se', 'steady_state_19_41d'; I and J derived (Q/t, I/A_lab), RE estimator: integral, metafile 'Removal-CE%' cell AI7"
+    parameter_overrides:
+      PROC:
+        FCDI-BES:
+          Voltage Applied: 2.0
+          Current: 8.959076124011858e-05
+          Current Density: 0.041021410824230116
+          Removal Efficiency: 0.9192891478923575
+          Faradaic Efficiency: 0.202040476346469
+
+  cond_2v_n:
+    inherits: base
+    condition: 2V+N
+    label: "2 V, Se + nitrate (condition 2V+N)"
+    note: >-
+      Measured operating point 2V+N. FE is the D05 selenium Faradaic efficiency, V the applied voltage. Current I = Q_total / t over the window and current density J = I / A_mem,lab (A_mem,lab = 0.002184 m2, the membrane area facing the channels). Removal efficiency: molar balance of D05 (no integral estimator exists for this run).
+    source: "Riveros et al. 2026 (Water Res. 303, 126244), steady-state window days 19-41; D05 rows '2V Se+N', 'steady_state_19_41d'; I and J derived (Q/t, I/A_lab), RE estimator: molar balance of D05 (no integral estimator exists for this run)"
+    parameter_overrides:
+      PROC:
+        FCDI-BES:
+          Voltage Applied: 2.0
+          Current: 0.00015840760035009185
+          Current Density: 0.07253095254125085
+          Removal Efficiency: 0.8492384058965855
+          Faradaic Efficiency: 0.0804859179634402
+
+  cond_3v_n:
+    inherits: base
+    condition: 3V+N
+    label: "3 V, Se + nitrate (condition 3V+N)"
+    note: >-
+      Measured operating point 3V+N. FE is the D05 selenium Faradaic efficiency, V the applied voltage. Current I = Q_total / t over the window and current density J = I / A_mem,lab (A_mem,lab = 0.002184 m2, the membrane area facing the channels). Removal efficiency: molar balance of D05 (no integral estimator exists for this run).
+    source: "Riveros et al. 2026 (Water Res. 303, 126244), steady-state window days 19-41; D05 rows '3V Se+N', 'steady_state_19_41d'; I and J derived (Q/t, I/A_lab), RE estimator: molar balance of D05 (no integral estimator exists for this run)"
+    parameter_overrides:
+      PROC:
+        FCDI-BES:
+          Voltage Applied: 3.0
+          Current: 0.00029057672076552725
+          Current Density: 0.13304794906846484
+          Removal Efficiency: 0.8992706440293471
+          Faradaic Efficiency: 0.0863854764887923
+
+  lab_ideal:
+    inherits: base
+    label: "3 V base case without stack and scale-up losses (laboratory-ideal)"
+    note: >-
+      The base case with the laboratory current density fully retained at scale, no shunt current and
+      no in-plane ohmic drop in the current collector (ProcessAssumptions v02, group Scale-up), i.e. the
+      implicit assumption of the earlier drafts. Reported alongside the base case, which carries the
+      losses at their central values.
+    source: "DESIGN_phase3 section 3.2 (owner decision D2, 2026-10-05)"
+    parameter_overrides:
+      PROC:
+        Scale-up:
+          Current density retention: 1.0
+          Shunt current fraction: 0.0
+          Graphite resistivity: 0.0
+
+  nitrate_competition:
+    inherits: base
+    label: "COUNTERFACTUAL: 3 V, Se + nitrate at the Se-only current density (superseded by cond_3v_n)"
+    note: >-
+      Counterfactual kept for comparison: the Faradaic and removal efficiencies of the 3 V Se + nitrate run combined with the Se-only current density, i.e. what a selectivity-only reading predicts. The measured condition 3V+N (cond_3v_n) ran at its own, higher current density. Original note: Co-contaminant case. Nitrate barely changes removal (+0.2%) but collapses
+      Faradaic efficiency by 69%, because it competes for electrons in the BES
+      rather than for electromigration in the FCDI. FE sets current demand and
+      therefore membrane and electrode area.
+    parameter_overrides:
+      PROC:
+        FCDI-BES:
+          Faradaic Efficiency: 0.086385
+          Removal Efficiency: 0.893759
+
+  window_full_41d:
+    inherits: base
+    label: 3 V, full 41-day window, Se only
+    note: Includes the start-up transient; more conservative than steady state.
+    parameter_overrides:
+      PROC:
+        FCDI-BES:
+          Faradaic Efficiency: 0.222162
+          Removal Efficiency: 0.864598
+
+  lci_graphite_battery_anode:
+    inherits: base
+    label: Base case with the lithium-ion battery anode graphite LCI
+    note: >-
+      Upper bound on the graphite proxy. The battery-anode dataset's
+      ecotoxicity score is about four orders of magnitude above the generic
+      market activity's (the values are in the licensed factor table), a spread
+      that decides the sign of the ecotoxicity result. Reported as a
+      first-class sensitivity, not a silent assumption.
+    lca_dataset_overrides:
+      graphite electrode: metafile_corrected
+
+  legacy_2v:
+    label: "SUPERSEDED: 2 V operating point of the inputs workbook (earlier campaign, 0.254 L reactor); SI only"
+    note: >-
+      Reproduces the numbers in the previous manuscript draft ($17.81/m3) in the
+      Phase-1 configuration (reactor bare-module factors 2.0, no stack and
+      scale-up losses; see the README).
+      Retained only to document the correction.
+    parameter_overrides:
+      PROC:
+        FCDI-BES:
+          Voltage Applied: 2.0
+          Current: 0.0008044806376262616
+          Current Density: 0.3683519403050648
+          Removal Efficiency: 0.7788499607217497
+          Faradaic Efficiency: 0.637363914137876
+      INF:
+        WW Flowrate Influent: 10.0
+    lca_dataset_overrides:
+      graphite electrode: inputs_v1
+      selenium: inputs_v1

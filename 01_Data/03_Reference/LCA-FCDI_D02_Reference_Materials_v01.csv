@@ -1,0 +1,24 @@
+﻿group,parameter,value,unit,source_type,reference,source,source_locator,value_type,note
+Graphite Electrodes,Thickness,0.7,cm,measured,UA lab measurement,UA lab measurement,,reported,value_type mapped from source_type=measured; author review pending
+Graphite Electrodes,Density,1.72,g/ml,vendor,Ref: Alibaba anode graphite plate for electrolysis,Ref: Alibaba anode graphite plate for electrolysis,,reported,value_type mapped from source_type=vendor; author review pending
+Graphite Electrodes,Lifespan,14,years,assumption,Assumption based on absence of O2 (no carbon oxidation competition) and max flow velocity 0.11 m/s (low abrasion); erosion localized at turns at 500 um/yr over 0.7 cm gives 14 years,Assumption based on absence of O2 (no carbon oxidation competition) and max flow velocity 0.11 m/s (low abrasion); erosion localized at turns at 500 um/yr over 0.7 cm gives 14 years,,assumed,
+Graphite Electrodes,Cost,8,$/kg,vendor,Ref: Alibaba anode graphite plate for electrolysis,Ref: Alibaba anode graphite plate for electrolysis,,reported,value_type mapped from source_type=vendor; author review pending
+Granular Activated Carbon (GAC),GAC Loading,5,wt%,measured,Based on literature and UA lab,Based on literature and UA lab,,reported,value_type mapped from source_type=measured; author review pending
+Granular Activated Carbon (GAC),Bulk Density,0.45,g/cm3,literature,Ref: Wikipedia averaged,Ref: Wikipedia averaged,,reported,value_type mapped from source_type=literature; author review pending
+Granular Activated Carbon (GAC),Diameter,0.355,mm,measured,Lab measurement,Lab measurement,,reported,value_type mapped from source_type=measured; author review pending
+Granular Activated Carbon (GAC),Cost,1.2,$/kg,vendor,Ref: Alibaba spherical activated carbon,Ref: Alibaba spherical activated carbon,,reported,value_type mapped from source_type=vendor; author review pending
+Granular Activated Carbon (GAC),Biofilm GAC lifespan,6,month,assumption,Assumption,Assumption,,assumed,
+Granular Activated Carbon (GAC),Biofilm GAC cultivation yield,100,g/L,measured,Lab measurement,Lab measurement,,reported,value_type mapped from source_type=measured; author review pending
+Membranes,Thickness,0.014,cm,measured,Lab measurement,Lab measurement,,reported,value_type mapped from source_type=measured; author review pending
+Membranes,Lifespan,8.5,years,literature,Ref: Jensen et al. Nitrate in Potable Water page 2242,Ref: Jensen et al. Nitrate in Potable Water page 2242,,reported,value_type mapped from source_type=literature; author review pending
+Membranes,Cost,250,$/m2,vendor,Ref: quotes for uncertainty analysis quote no. 3 for 1.2 x 2.0 m2 sheets,Ref: quotes for uncertainty analysis quote no. 3 for 1.2 x 2.0 m2 sheets,,reported,value_type mapped from source_type=vendor; author review pending
+Membranes,Density,1.58,g/mL,literature,Ref: this paper,Ref: this paper,,reported,value_type mapped from source_type=literature; author review pending
+Acrylic Glass (PMMA),Thickness,1.1,cm,measured,Lab measurement,Lab measurement,,reported,value_type mapped from source_type=measured; author review pending
+Acrylic Glass (PMMA),Lifespan,25,years,literature,Ref: this paper under tensile stress,Ref: this paper under tensile stress,,reported,value_type mapped from source_type=literature; author review pending
+Acrylic Glass (PMMA),Density,1.185,g/mL,literature,Ref: Wikipedia averaged,Ref: Wikipedia averaged,,reported,value_type mapped from source_type=literature; author review pending
+Acrylic Glass (PMMA),Cost,3.26,$/kg,literature,Ref: BusinessAnalytiq North America Feb 2026,Ref: BusinessAnalytiq North America Feb 2026,,reported,value_type mapped from source_type=literature; author review pending
+Electrocultivation Reactor,Material of construction,PP and PVDF,-,assumption,Electrochemical flow cells,Electrochemical flow cells,,assumed,
+Electrocultivation Reactor,Lifespan,30,years,assumption,Assumption: ambient temperature; mildly basic pH; no oxidants; low salt and buffer concentration; batch operation once per 6 months; indoor use without UV exposure,Assumption: ambient temperature; mildly basic pH; no oxidants; low salt and buffer concentration; batch operation once per 6 months; indoor use without UV exposure,,assumed,
+Electrocultivation Reactor,Cost,1.12,$/kg,literature,Ref: imarcgroup North America Feb 2026,Ref: imarcgroup North America Feb 2026,,reported,value_type mapped from source_type=literature; author review pending
+Electrocultivation Reactor,Polypropylene density,0.9125,kg/L,literature,Ref: Wikipedia averaged,Ref: Wikipedia averaged,,reported,value_type mapped from source_type=literature; author review pending
+Electrocultivation Reactor,Polypropylene thickness,1.27,cm,vendor,Assumption: tank vendor,Assumption: tank vendor,,reported,value_type mapped from source_type=vendor; reference text says assumed; author review pending

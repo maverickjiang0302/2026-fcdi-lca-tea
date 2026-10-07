@@ -1,0 +1,10 @@
+﻿equipment_type,model_name,min_volume_L,max_volume_L,purchase_cost_usd,power_kW,notes,source,source_locator,value_type,note
+Electrocultivation Mixer,89044-512,0.001,0.1,245.11,,Vendor catalogue,Vendor catalogue,,,
+Electrocultivation Mixer,89044-514,0.1,0.25,219.7,,Vendor catalogue,Vendor catalogue,,,
+Electrocultivation Mixer,89044-516,0.25,0.5,255.5,,Vendor catalogue,Vendor catalogue,,,
+Electrocultivation Mixer,89044-518,0.5,1,235.78,,Vendor catalogue,Vendor catalogue,,,
+Electrocultivation Mixer,89044-520,1,2,163.62,,Vendor catalogue,Vendor catalogue,,,
+Electrocultivation Mixer,89044-522,2,5,280.94,,Vendor catalogue,Vendor catalogue,,,
+Electrocultivation Mixer,89082-894,5,7.25,1140.0129999999999,,Vendor catalogue,Vendor catalogue,,,
+Electrocultivation Mixer,89082-896,7.25,9.25,1303.02,,Vendor catalogue,Vendor catalogue,,,
+Electrocultivation Mixer,89082-888,9.25,17,1486.73,,Vendor catalogue,Vendor catalogue,,,

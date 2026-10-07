@@ -1,0 +1,17 @@
+﻿key,value,note,source,source_locator,value_type
+method,"per-draw default_rng([seed, draw_id]) - not Latin hypercube","Each Monte Carlo draw (and each draw of the flowrate-scaling band) seeds its own numpy Generator with default_rng([seed, draw_id]); every uncertain input is drawn independently from its triangular (or uniform) distribution. There is no Latin hypercube stratification.",pre-restructure code (commit f912a40),fcdibes/analysis/uncertainty.py run(); fcdibes/analysis/scaling.py run(),documentation
+seed,20260901,"seed of every Monte Carlo draw (Monte Carlo and scaling band); draw i uses default_rng([seed, i])",pre-restructure code (commit f912a40),fcdibes/analysis/uncertainty.py MCSpec.seed; fcdibes/analysis/scaling.py ScalingSpec.seed,assumed
+n_draws,1000,Monte Carlo draws per distribution and configuration,pre-restructure code (commit f912a40),scripts/run_all.py section 4 (MCSpec.n_draws),assumed
+n_draws_quick,100,the same with --quick (smoke run),pre-restructure code (commit f912a40),scripts/run_all.py section 4 (--quick),assumed
+distributions,triangular|uniform,"Monte Carlo distribution checks, in run order; triangular is the reported case, uniform the distribution check",pre-restructure code (commit f912a40),scripts/run_all.py section 4,assumed
+oat_step,0.1,relative step of the one-at-a-time sensitivity: each parameter moves by plus and minus 10 percent,pre-restructure code (commit f912a40),fcdibes/analysis/sensitivity.py run(step=0.10),assumed
+scaling_n_flow,30,"flowrates in the geometric scaling sweep (10 to 2600 m3/h), per configuration",pre-restructure code (commit f912a40),fcdibes/analysis/scaling.py ScalingSpec.n_flow; scripts/run_all.py section 5,assumed
+scaling_n_flow_quick,10,the same with --quick,pre-restructure code (commit f912a40),scripts/run_all.py section 5 (--quick),assumed
+scaling_n_draws,100,Monte Carlo draws per flowrate and configuration behind the P5-P95 band,pre-restructure code (commit f912a40),fcdibes/analysis/scaling.py ScalingSpec.n_draws; scripts/run_all.py section 5,assumed
+scaling_n_draws_quick,20,the same with --quick,pre-restructure code (commit f912a40),scripts/run_all.py section 5 (--quick),assumed
+grid_n_flow,28,flowrate points of the main scale-against-performance grid (areal selenium rate axis),pre-restructure code (commit f912a40),scripts/run_all.py section 6 (GridSpec.n_flow),assumed
+grid_n_axis,28,axis points of the main scale-against-performance grid,pre-restructure code (commit f912a40),scripts/run_all.py section 6 (GridSpec.n_axis),assumed
+grid_n_flow_quick,8,the same with --quick,pre-restructure code (commit f912a40),scripts/run_all.py section 6 (--quick),assumed
+grid_n_axis_quick,8,the same with --quick,pre-restructure code (commit f912a40),scripts/run_all.py section 6 (--quick),assumed
+alt_grid_n_flow,16,"flowrate points of each alternate-axis grid (current density, Faradaic efficiency, membrane price); skipped by --quick",pre-restructure code (commit f912a40),scripts/run_all.py section 6 (alternate axes),assumed
+alt_grid_n_axis,16,axis points of each alternate-axis grid; skipped by --quick,pre-restructure code (commit f912a40),scripts/run_all.py section 6 (alternate axes),assumed

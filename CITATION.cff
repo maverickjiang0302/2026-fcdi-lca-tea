@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite the article and this repository."
+title: "FCDI-BES life-cycle and techno-economic assessment: input data and calculation code"
+type: software
+authors:
+  - family-names: Riveros
+    given-names: Adriana
+    affiliation: "The University of Alabama"
+  - family-names: Mostofifar
+    given-names: Amirhossein
+    affiliation: "The University of Alabama"
+  - family-names: Jiang
+    given-names: Daqian
+    affiliation: "The University of Alabama"
+    email: djiang6@ua.edu
+# PLACEHOLDER (not yet filled in): repository-code is added when the GitHub repository exists. No repository has been
+# created and no URL is invented here; add the line
+#   repository-code: "<the repository's GitHub URL>"
+license:
+  - MIT
+  - CC-BY-4.0
+keywords:
+  - life cycle assessment
+  - techno-economic analysis
+  - selenium
+  - capacitive deionization
+  - bioelectrochemical systems

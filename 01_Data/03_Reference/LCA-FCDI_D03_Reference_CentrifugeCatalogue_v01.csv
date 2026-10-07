@@ -1,0 +1,9 @@
+﻿equipment_type,model_name,min_flowrate_m3hr,max_flowrate_m3hr,purchase_cost_usd,power_kW,notes,source,source_locator,value_type,note
+Centrifuge,NRSDH5,0.1,0.5,13000,1.5,Vendor catalogue; up to 500 L/hr,Vendor catalogue; up to 500 L/hr,,,
+Centrifuge,LP-DHC300,0.5,1,15300,4,Vendor catalogue; up to 1250 L/hr,Vendor catalogue; up to 1250 L/hr,,,
+Centrifuge,360,1,2,18750,7.5,Vendor catalogue; up to 2000 L/hr,Vendor catalogue; up to 2000 L/hr,,,
+Centrifuge,RPDB205SJ-01,2,3,30000,7.5,Vendor catalogue; up to 3000 L/hr,Vendor catalogue; up to 3000 L/hr,,,
+Centrifuge,RPDB309SJ-03,3,5,38000,15,Vendor catalogue; up to 5000 L/hr,Vendor catalogue; up to 5000 L/hr,,,
+Centrifuge,HGDB209VC-03,5,10,50000,15,Vendor catalogue; up to 10000 L/hr,Vendor catalogue; up to 10000 L/hr,,,
+Centrifuge,RPDB313VC-03,10,20,72000,30,Vendor catalogue; up to 20000 L/hr,Vendor catalogue; up to 20000 L/hr,,,
+Centrifuge,RPDB215VC-01,20,30,120000,37,Vendor catalogue; up to 30000 L/hr,Vendor catalogue; up to 30000 L/hr,,,

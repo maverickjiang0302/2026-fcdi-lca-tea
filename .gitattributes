@@ -1,0 +1,4 @@
+# Store every file byte for byte: no line-ending conversion on checkout or commit, whatever core.autocrlf says.
+# The inputs are read as data, DEPOSIT_MANIFEST.csv records the SHA-256 of every file, and RunAll --verify
+# compares outputs byte for byte.
+* -text

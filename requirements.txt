@@ -1,0 +1,12 @@
+# LCA-FCDI public repository: the tested environment, Python 3.14.7 (Windows 11).
+#
+#     pip install -r requirements.txt
+#
+# Exactly the third-party packages that the code in this repository imports, at the versions the results
+# were produced and checked with. The input tables are read with pandas' default float parser; other
+# versions were not tested.
+
+joblib==1.6.0
+numpy==2.5.2
+pandas==3.0.5
+PyYAML==6.0.3

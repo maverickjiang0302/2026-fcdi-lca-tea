@@ -1,0 +1,5 @@
+﻿parameter,value,unit,source_type,reference,source,source_locator,value_type,note
+WW Flowrate Influent,10,m3/hr,assumption,"Pilot design basis; set per scenario in scenarios.yaml",Pilot design basis; set per scenario in scenarios.yaml,,assumed,
+selenate concentration,10,mg/L,assumption,= 10 g/m3,= 10 g/m3,,assumed,
+selenite concentration,10,mg/L,assumption,= 10 g/m3,= 10 g/m3,,assumed,
+WW Density,1000,kg/m3,assumption,Assumption: water density,Assumption: water density,,assumed,

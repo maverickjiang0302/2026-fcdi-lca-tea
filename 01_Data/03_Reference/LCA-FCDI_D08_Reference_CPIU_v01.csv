@@ -1,0 +1,12 @@
+﻿year,cpi_u_annual_average,basis,source,source_locator,accessed,value_type,note
+2010,218.056,annual average (M13),U.S. Bureau of Labor Statistics CPI-U all items U.S. city average NSA (series CUUR0000SA0),BLS series CUUR0000SA0 annual average; monthly values via FRED CPIAUCNS (mean of 12 months = 218.0555),2026-10-05,reported,Jensen et al. 2014 benchmark dollar year
+2014,236.736,annual average (M13),U.S. Bureau of Labor Statistics CPI-U all items U.S. city average NSA (series CUUR0000SA0),mean of the 12 FRED CPIAUCNS monthly values 2014,2026-10-05,reported,
+2016,240.007,annual average (M13),U.S. Bureau of Labor Statistics CPI-U all items U.S. city average NSA (series CUUR0000SA0),mean of the 12 FRED CPIAUCNS monthly values 2016,2026-10-05,reported,
+2019,255.657,annual average (M13),U.S. Bureau of Labor Statistics CPI-U all items U.S. city average NSA (series CUUR0000SA0),mean of the 12 FRED CPIAUCNS monthly values 2019,2026-10-05,reported,
+2020,258.811,annual average (M13),U.S. Bureau of Labor Statistics CPI-U all items U.S. city average NSA (series CUUR0000SA0),mean of the 12 FRED CPIAUCNS monthly values 2020,2026-10-05,reported,
+2021,270.970,annual average (M13),U.S. Bureau of Labor Statistics CPI-U all items U.S. city average NSA (series CUUR0000SA0),mean of the 12 FRED CPIAUCNS monthly values 2021,2026-10-05,reported,
+2022,292.655,annual average (M13),U.S. Bureau of Labor Statistics CPI-U all items U.S. city average NSA (series CUUR0000SA0),mean of the 12 FRED CPIAUCNS monthly values 2022,2026-10-05,reported,
+2023,304.702,annual average (M13),U.S. Bureau of Labor Statistics CPI-U all items U.S. city average NSA (series CUUR0000SA0),mean of the 12 FRED CPIAUCNS monthly values 2023,2026-10-05,reported,
+2024,313.689,annual average (M13),U.S. Bureau of Labor Statistics CPI-U all items U.S. city average NSA (series CUUR0000SA0),BLS API v1 CUUR0000SA0 period M13 (annual) = 313.689,2026-10-05,reported,
+2025,321.943,annual average (M13),U.S. Bureau of Labor Statistics CPI-U all items U.S. city average NSA (series CUUR0000SA0),BLS API v1 CUUR0000SA0 period M13 (annual) = 321.943 (October 2025 not published: 2025 lapse in appropriations),2026-10-05,reported,
+2026,331.655,mean of January-August 2026 (partial year),U.S. Bureau of Labor Statistics CPI-U all items U.S. city average NSA (series CUUR0000SA0),BLS API v1 CUUR0000SA0 M01-M08 2026: 325.252 326.785 330.213 333.020 335.123 333.952 333.918 334.980 (mean 331.6554),2026-10-05,derived,target dollar year of the model (2026 USD); the twelve-month average is not yet available
