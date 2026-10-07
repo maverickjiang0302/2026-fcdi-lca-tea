@@ -1,17 +1,17 @@
 # FCDI-BES life-cycle and techno-economic assessment: input data and calculation code
 
-Input data and Python code behind the article *"Scale is not the lever: material- and area-driven costs set the
-improvement targets for an integrated FCDI-BES process recovering selenium from FGD wastewater"* (Riveros,
-Mostofifar and Jiang, The University of Alabama; the full reference is added on publication).
+Input data and Python code behind the article *"Areal selenium productivity sets improvement targets for
+integrated FCDI-BES: a prospective LCA-TEA"* (Riveros, Mostofifar and Jiang, The University of Alabama; the full
+reference is added on publication).
 
-**Repository:** the GitHub address is added here when the repository is created. **Archive:** Zenodo; the DOI is
-added on the first archived release (placeholder until then).
+**Repository:** https://github.com/maverickjiang0302/2026-fcdi-lca-tea. **Archive:** Zenodo; every GitHub release of this repository is archived there with its own
+DOI (the Zenodo record lists the DOI of each version and the concept DOI of all versions).
 
 The model couples flow-electrode capacitive deionization (FCDI) with a bio-electrochemical system (BES) that reduces
 selenium oxyanions from flue-gas desulfurization wastewater to elemental selenium, with and without a downstream
 selenium-recovery train, from pilot scale to a full-scale plant. Functional unit: 1 m3 of wastewater treated;
 boundary: cradle to gate; impact method: TRACI 2.1 with ecoinvent 3.7 (cut-off) background data; capital costing
-after Guthrie and Seider et al. The equations are stated in the Supporting Information (SI).
+after Guthrie and Seider et al. The equations are stated in the article's Supplementary Material (SI).
 
 ## What is in this repository
 

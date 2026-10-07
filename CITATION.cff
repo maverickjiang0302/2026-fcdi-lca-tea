@@ -1,6 +1,12 @@
 cff-version: 1.2.0
 message: "If you use this code or data, please cite the article and this repository."
 title: "FCDI-BES life-cycle and techno-economic assessment: input data and calculation code"
+abstract: "Input data (versioned CSV tables with a provenance record for every row) and the Python package that
+  performs every calculation of a cradle-to-gate life cycle assessment and techno-economic assessment of selenium
+  treatment by flow-electrode capacitive deionization coupled to bio-electrochemical systems (FCDI-BES), with the
+  runner that validates the inputs and reproduces every result table. The licensed ecoinvent 3.7 factors are not
+  included: a factor template, a dummy factor table and a flow dictionary are provided, and all techno-economic
+  results are reproduced without a license. Code: MIT License; data: Creative Commons Attribution 4.0 (LICENSE-DATA)."
 type: software
 authors:
   - family-names: Riveros
@@ -13,12 +19,10 @@ authors:
     given-names: Daqian
     affiliation: "The University of Alabama"
     email: djiang6@ua.edu
-# PLACEHOLDER (not yet filled in): repository-code is added when the GitHub repository exists. No repository has been
-# created and no URL is invented here; add the line
-#   repository-code: "<the repository's GitHub URL>"
-license:
-  - MIT
-  - CC-BY-4.0
+repository-code: "https://github.com/maverickjiang0302/2026-fcdi-lca-tea"
+# One license string: Zenodo's GitHub integration reads `license` as a single value (a list made release v1.0.0
+# fail). The code is MIT (LICENSE); the data are CC BY 4.0 (LICENSE-DATA), as the abstract and README state.
+license: MIT
 keywords:
   - life cycle assessment
   - techno-economic analysis

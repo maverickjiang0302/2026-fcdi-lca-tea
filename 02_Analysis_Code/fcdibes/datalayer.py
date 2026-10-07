@@ -90,9 +90,10 @@ Registries (dict key -> file name; the names equal the approved mapping's new na
             slug in BREAK_EVEN_SLUGS. Unknown values raise KeyError.
   ORPHANS   dict(container=<folder name>, files=<the 24 superseded file names>): read-only copies that no code
             regenerates (scenario 'lci_graphite_low'). Never written, never in a run folder.
-  FIG       key -> (figure id, dataset range or None, description) for fig1_framework, fig2_flowsheet,
-            fig3_lca_normalized, fig4_cost_structure, fig5_scale_vs_performance_gwp,
-            fig6_scale_vs_performance_lcot, fig7_sensitivity. FIG_VERSION[key] = 'v01'. FIG_EXTS = png, pdf.
+  FIG       key -> (figure id, dataset range or None, description) for fig1_flowsheet, fig2_lca_normalized,
+            fig3_cost_structure, fig4_scale_vs_performance, fig5_sensitivity (the manuscript figures) and
+            figS1_framework (Fig. S1 of the Supplementary Material). FIG_VERSION[key] = 'v01'. FIG_EXTS = png, pdf.
+            SUPERSEDED_FIGURES: the seven figures of v06, kept on disk read-only (documents v07).
   DOC       key -> file name: manuscript, si (versioned by the constants above), reference_list,
             data_dictionary, model_notes, publishing, discovery_report, verification_report, data_sharing,
             science_revision, documents_v06, legend, crosswalk. DOC_LOCATION[key] is the folder of each; DOC_VERSIONS
@@ -113,7 +114,7 @@ Registries (dict key -> file name; the names equal the approved mapping's new na
             superseded inputs, 01_Raw, every file of 02_Processed (result files can be combined with the public
             inventory to recover licensed factors), 03_Manuscript, 04_Figures, 00_Project_Docs, the figure package,
             the document builders, every other tool, tests/ and the project's repo files.
-            DEPOSIT_VERSION ('v04'), deposit_name(version) / deposit_dir(version) (00_Project_Docs/
+            DEPOSIT_VERSION ('v06'), deposit_name(version) / deposit_dir(version) (00_Project_Docs/
             LCA-FCDI_ZenodoDeposit_vNN, built by CODE['build_deposit'], never run in place), deposit_files() ->
             [(published path, source path, registry source)], DEPOSIT_MARKER (DEPOSIT_MANIFEST.csv at the deposit
             root): is_deposit() is True in a public clone (validation then uses its 'deposit' scope).
@@ -408,28 +409,59 @@ ORPHANS = dict(
 )
 
 # figure key -> (figure id, dataset range or None, description); the key is the old figure stem
+# Documents v07 (2026-10-06, the owner's revision and comment C1): the conceptual framework is Fig. S1 of the
+# Supplementary Material (figure id FigS01; embedded by the SI builder), the GWP and LCOT surfaces are one four-panel
+# figure, and the manuscript holds five figures. The seven v06 figures stay on disk as superseded figures
+# (SUPERSEDED_FIGURES), never regenerated or embedded. manuscript_figure_keys() / si_figure_keys() split the two.
 FIG = dict(
-    fig1_framework=("Fig01", None, "Framework"),
-    fig2_flowsheet=("Fig02", None, "Flowsheet"),
-    fig3_lca_normalized=("Fig03", "D01-D06", "LCANormalized"),
-    fig4_cost_structure=("Fig04", "D02-D08", "CostStructure"),
-    fig5_scale_vs_performance_gwp=("Fig05", "D01-D06", "ScaleVsPerformanceGWP"),
-    fig6_scale_vs_performance_lcot=("Fig06", "D02-D08", "ScaleVsPerformanceLCOT"),
-    fig7_sensitivity=("Fig07", "D01-D06", "Sensitivity"),
+    fig1_flowsheet=("Fig01", None, "Flowsheet"),                                   # Fig02 until v06 (content identical)
+    fig2_lca_normalized=("Fig02", "D01-D06", "LCANormalized"),                     # Fig03 until v06 (one label)
+    fig3_cost_structure=("Fig03", "D02-D08", "CostStructure"),                     # Fig04 until v06 (two labels)
+    fig4_scale_vs_performance=("Fig04", "D01-D08", "ScaleVsPerformance"),          # Fig05 + Fig06 of v06, four panels
+    fig5_sensitivity=("Fig05", "D01-D06", "Sensitivity"),                          # Fig07 until v06 (content identical)
+    figS1_framework=("FigS01", None, "Framework"),                                 # Fig01 until v06 (three labels)
 )
 FIG_VERSION = {key: "v01" for key in FIG}
 FIG_EXTS = ("png", "pdf")
+SI_FIGURE_PREFIX = "FigS"
+# Superseded figures (documents v07, 2026-10-06): the seven figure files of v06. They stay in 04_Figures, read-only,
+# are hashed by the validation (validation.SUPERSEDED_FIGURE_SHA256), never regenerated, never loaded or embedded, and
+# are declared to the RefactorGate (every file of 04_Figures is registered). Same layout as FIG.
+SUPERSEDED_FIGURES = dict(
+    fig1_framework=("Fig01", None, "Framework"),                                  # FigS01 since v07
+    fig2_flowsheet=("Fig02", None, "Flowsheet"),                                  # Fig01 since v07
+    fig3_lca_normalized=("Fig03", "D01-D06", "LCANormalized"),                    # Fig02 since v07
+    fig4_cost_structure=("Fig04", "D02-D08", "CostStructure"),                    # Fig03 since v07
+    fig5_scale_vs_performance_gwp=("Fig05", "D01-D06", "ScaleVsPerformanceGWP"),    # panels a-b of Fig04 since v07
+    fig6_scale_vs_performance_lcot=("Fig06", "D02-D08", "ScaleVsPerformanceLCOT"),  # panels c-d of Fig04 since v07
+    fig7_sensitivity=("Fig07", "D01-D06", "Sensitivity"),                           # Fig05 since v07
+)
+SUPERSEDED_FIGURE_VERSION = {key: "v01" for key in SUPERSEDED_FIGURES}
+
+
+def manuscript_figure_keys() -> list:
+    """The FIG keys embedded in the manuscript, in figure order (every key whose id is not an S figure)."""
+    return [key for key, (fig_id, _r, _d) in FIG.items() if not fig_id.startswith(SI_FIGURE_PREFIX)]
+
+
+def si_figure_keys() -> list:
+    """The FIG keys embedded in the Supplementary Material (figure ids FigS01, ...)."""
+    return [key for key, (fig_id, _r, _d) in FIG.items() if fig_id.startswith(SI_FIGURE_PREFIX)]
 
 # ---------------------------------------------------------------------------------------------- documents
-MANUSCRIPT_VERSION = "v06"                  # document revision (2026-10-06): SI Table S15 deleted, SI tables renumbered,
-SI_VERSION = "v06"                          # manuscript Table 4 moved to SI Table S30; v05 (Phase 3) and v01-v04 stay
+MANUSCRIPT_VERSION = "v08"                  # v08 (2026-10-06): the owner's answers to the v07 queries (abstract wording,
+                                            # citations, CRediT statement, Zenodo DOI); v07 editorial revision (Figs. 5-6
+                                            # merged, Table 3 moved to SI Table S26, Water Research references, US spelling)
+SI_VERSION = "v07"                          # unchanged in v08; v06 (document revision), v05 (Phase 3) and v01-v04 stay
 _DOC_VERSIONED = dict(manuscript="LCA-FCDI_Manuscript_{v}.docx", si="LCA-FCDI_SI_{v}.docx")
-DOC_VERSIONS = dict(manuscript=("v01", "v02", "v03", "v04", "v05", MANUSCRIPT_VERSION),
-                    si=("v01", "v02", "v03", "v04", "v05", SI_VERSION))
+DOC_VERSIONS = dict(manuscript=("v01", "v02", "v03", "v04", "v05", "v06", "v07", MANUSCRIPT_VERSION),
+                    si=("v01", "v02", "v03", "v04", "v05", "v06", SI_VERSION))
 DOC = dict(
     manuscript=_DOC_VERSIONED["manuscript"].format(v=MANUSCRIPT_VERSION),
     si=_DOC_VERSIONED["si"].format(v=SI_VERSION),
-    reference_list="LCA-FCDI_Manuscript_ReferenceList_v03.json",                 # v03 2026-10-06: DOI of yu2016 added (v02: Phase 3)
+    reference_list="LCA-FCDI_Manuscript_ReferenceList_v05.json",                 # v05 (manuscript v08): cited_in updated;
+                                                                                 # v04 2026-10-06: structured entries, Water
+                                                                                 # Research (Elsevier Harvard) style; v03: ACS
     data_dictionary="LCA-FCDI_D01-D09_Guide_DataDictionary_v02.md",              # Phase 3: D09 and the new inputs
     model_notes="LCA-FCDI_D01-D09_Report_ModelNotes_v02.md",                     # Phase 3: what changed and why
     publishing="LCA-FCDI_Plan_Publishing_v01.md",
@@ -438,20 +470,30 @@ DOC = dict(
     data_sharing="LCA-FCDI_Report_DataSharing_v01.md",                           # Phase 2 report
     science_revision="LCA-FCDI_Report_ScienceRevision_v01.md",                   # Phase 3 report (written last)
     documents_v06="LCA-FCDI_Report_DocumentsV06_v01.md",                        # document revision v06 (2026-10-06)
+    documents_v07="LCA-FCDI_Report_DocumentsV07_v01.md",                        # editorial revision v07 (2026-10-06)
+    documents_v08="LCA-FCDI_Report_DocumentsV08_v01.md",                        # manuscript v08 (2026-10-06)
+    highlights="LCA-FCDI_Highlights_v01.docx",                                  # v08: written by the manuscript builder
+                                                                                 # from the prose module's HIGHLIGHTS
+    graphical_abstract="LCA-FCDI_GraphicalAbstract_v01.png",                     # owner-made asset (2026-10-06), not
+                                                                                 # generated by any script, not embedded
     legend="Dataset_ID_Legend.md",
     crosswalk="Data_Figure_Crosswalk.csv",
 )
 DOC_LOCATION = dict(
-    manuscript=DOC_DIR, si=DOC_DIR, reference_list=DOC_DIR,
+    manuscript=DOC_DIR, si=DOC_DIR, reference_list=DOC_DIR, graphical_abstract=DOC_DIR, highlights=DOC_DIR,
     data_dictionary=PROJDOC_DIR, model_notes=PROJDOC_DIR, publishing=PROJDOC_DIR,
     discovery_report=PROJDOC_DIR, verification_report=PROJDOC_DIR, data_sharing=PROJDOC_DIR,
-    science_revision=PROJDOC_DIR, documents_v06=PROJDOC_DIR, legend=DATA_DIR, crosswalk=MANUSCRIPT_DIR,
+    science_revision=PROJDOC_DIR, documents_v06=PROJDOC_DIR, documents_v07=PROJDOC_DIR, documents_v08=PROJDOC_DIR,
+    legend=DATA_DIR,
+    crosswalk=MANUSCRIPT_DIR,
 )
 # Earlier versions of the unversioned-key documents, kept on disk unchanged (documents are new versions, never edited
 # in place): key -> (DOC key whose folder holds it, file name).
 DOC_SUPERSEDED = dict(
     reference_list_v01=("reference_list", "LCA-FCDI_Manuscript_ReferenceList_v01.json"),
     reference_list_v02=("reference_list", "LCA-FCDI_Manuscript_ReferenceList_v02.json"),   # Phase 3 list; v03 adds one DOI
+    reference_list_v03=("reference_list", "LCA-FCDI_Manuscript_ReferenceList_v03.json"),   # ACS strings; v04 restructures
+    reference_list_v04=("reference_list", "LCA-FCDI_Manuscript_ReferenceList_v04.json"),   # v07 citations; v05 for v08
     data_dictionary_v01=("data_dictionary", "LCA-FCDI_D01-D08_Guide_DataDictionary_v01.md"),
     model_notes_v01=("model_notes", "LCA-FCDI_D01-D08_Report_ModelNotes_v01.md"),
 )
@@ -463,6 +505,7 @@ CODE = dict(
     make_si="LCA-FCDI_D01-D08_MakeSIDocx.py",
     manuscript_text="LCA-FCDI_D01-D08_ManuscriptText.py",
     si_equations="LCA-FCDI_D01-D08_SIEquations.py",
+    references="LCA-FCDI_D01-D08_References.py",                                   # v07: citation and reference rendering
     extract_factors="LCA-FCDI_D01_ExtractFactorsFromWorkbooks.py",
     write_factors_superseded="LCA-FCDI_D01_WriteFactorsEcoinvent37.py",           # DISARMED provenance script
     build_data_dictionary="LCA-FCDI_D01-D08_BuildDataDictionary.py",
@@ -495,9 +538,14 @@ REPO = dict(
 # declared_text_substitutions.csv and the project's README, pyproject, pytest.ini and environment.yml (the deposit
 # builder writes the public repository's own README, LICENSE-DATA, CITATION.cff, requirements.txt, .gitignore and
 # .gitattributes; LICENSE is the project's MIT text unchanged).
-DEPOSIT_VERSION = "v04"                   # v04 (2026-10-06, literature confirmation): D02 v03, D07 v03, D08 literature v02,
-                                          # D09 v02 and ledger.py (text only); v01 (Phase 2), v02 (Phase 3) and v03 (document
-                                          # revision) stay on disk
+DEPOSIT_VERSION = "v06"                   # v06 (2026-10-06, manuscript v08): CITATION.cff loadable by Zenodo (one license
+                                          # string, repository-code, abstract), README with the repository URL and the
+                                          # revised title, the registry constants of v08 (GitHub release v1.0.1).
+                                          # v05 (2026-10-06, documents v07): the registry constants of datalayer.py (figures
+                                          # renumbered and superseded, documents v07, reference list v04), the superseded-
+                                          # figure hashes of validation.py and the figure step of RunAll.py; inputs and
+                                          # calculations as in v04. v04 (literature confirmation; GitHub release v1.0.0),
+                                          # v01 (Phase 2), v02 (Phase 3) and v03 (document revision) stay on disk
 DEPOSIT_MARKER = "DEPOSIT_MANIFEST.csv"            # at the deposit root: path, bytes, sha256, registry_source
 DEPOSIT = dict(
     # Phase 3 (2026-10-05): the IN keys are unchanged where a newer version was registered (process_assumptions,
@@ -799,19 +847,41 @@ def orphan_file(name: str) -> Path:
 
 
 # ---------------------------------------------------------------------------------------------- figures, documents, code
-def fig_stem(key: str) -> str:
+def _figure_stem(registry: dict, versions: dict, key: str, what: str) -> str:
     try:
-        fig_id, drange, desc = FIG[key]
+        fig_id, drange, desc = registry[key]
     except KeyError:
-        raise KeyError(f"unknown figure key {key!r}; known: {sorted(FIG)}") from None
+        raise KeyError(f"unknown {what} key {key!r}; known: {sorted(registry)}") from None
     middle = f"_{drange}" if drange else ""
-    return f"{PROJECT}_{fig_id}{middle}_{desc}_{FIG_VERSION[key]}"
+    return f"{PROJECT}_{fig_id}{middle}_{desc}_{versions[key]}"
+
+
+def _figure_ext(ext: str) -> str:
+    if ext.lstrip(".") not in FIG_EXTS:
+        raise ValueError(f"unknown figure extension {ext!r}; use one of {FIG_EXTS}")
+    return ext.lstrip(".")
+
+
+def fig_stem(key: str) -> str:
+    return _figure_stem(FIG, FIG_VERSION, key, "figure")
 
 
 def fig_name(key: str, ext: str = "png") -> str:
-    if ext.lstrip(".") not in FIG_EXTS:
-        raise ValueError(f"unknown figure extension {ext!r}; use one of {FIG_EXTS}")
-    return f"{fig_stem(key)}.{ext.lstrip('.')}"
+    return f"{fig_stem(key)}.{_figure_ext(ext)}"
+
+
+def superseded_figure_name(key: str, ext: str = "png") -> str:
+    """File name of a superseded figure (SUPERSEDED_FIGURES; kept in 04_Figures, never regenerated)."""
+    return f"{_figure_stem(SUPERSEDED_FIGURES, SUPERSEDED_FIGURE_VERSION, key, 'superseded figure')}.{_figure_ext(ext)}"
+
+
+def superseded_figure(key: str, ext: str = "png") -> Path:
+    """Path of a superseded figure in the committed 04_Figures folder (hashed by the validation, never loaded)."""
+    return FIG_DIR / superseded_figure_name(key, ext)
+
+
+def superseded_figure_names() -> list:
+    return [superseded_figure_name(key, ext) for key in SUPERSEDED_FIGURES for ext in FIG_EXTS]
 
 
 def fig_file(key: str, ext: str = "png") -> Path:
@@ -1039,8 +1109,8 @@ _NAME_PATTERNS = {
                       rf"(?P<desc>{_CAMEL})\.(?P<ext>xlsx)$"),
     "figure": re.compile(rf"^{_PROJ}_(?P<fig>Fig(?:S)?\d\d)(?:_(?P<range>{_RANGE}))?_"
                          rf"(?P<desc>{_CAMEL})_(?P<version>v\d\d)(?:\.(?P<ext>png|pdf))?$"),
-    "document": re.compile(rf"^{_PROJ}_(?:(?P<range>{_RANGE})_)?(?P<type>Report|Plan|Guide|Manuscript|SI)"
-                           rf"(?:_(?P<desc>{_CAMEL}))?_(?P<version>v\d\d)\.(?P<ext>docx|md|json)$"),
+    "document": re.compile(rf"^{_PROJ}_(?:(?P<range>{_RANGE})_)?(?P<type>Report|Plan|Guide|Manuscript|SI|GraphicalAbstract|Highlights)"
+                           rf"(?:_(?P<desc>{_CAMEL}))?_(?P<version>v\d\d)\.(?P<ext>docx|md|json|png)$"),
     "script": re.compile(rf"^{_PROJ}_(?P<range>{_RANGE})_(?P<desc>{_CAMEL})\.(?P<ext>py)$"),
 }
 _SCENARIO_FILE_RE = re.compile(r"^(?P<scenario>[A-Za-z0-9][A-Za-z0-9_-]*)_(?P<config>with|no)_recovery__"
@@ -1144,6 +1214,14 @@ def registry_problems() -> list:
             continue
         for ext in FIG_EXTS:
             claim("FIG", key, fig_name(key, ext), "figure")
+    for key in SUPERSEDED_FIGURES:                  # v07: unique against every registered name, never a FIG key
+        if key not in SUPERSEDED_FIGURE_VERSION:
+            problems.append(f"SUPERSEDED_FIGURE_VERSION has no entry for {key!r}")
+            continue
+        if key in FIG:
+            problems.append(f"SUPERSEDED_FIGURES[{key!r}] is still a registered figure key")
+        for ext in FIG_EXTS:
+            claim("SUPERSEDED_FIGURES", key, superseded_figure_name(key, ext), "figure")
     for key, name in DOC.items():
         if key in ("legend", "crosswalk"):
             claim("DOC", key, name, None)
@@ -1239,9 +1317,11 @@ def _main() -> int:
     pending = [rel_root(ref(key)) for key in IN if not ref(key).is_file() and is_pending(key)]
     if pending:
         print(f"pending inputs (delivered by a later step of the current revision, PENDING_INPUTS): {pending}")
-    if not is_deposit():                       # a public clone has no raw workbooks and no superseded inputs
+    if not is_deposit():                       # a public clone has no raw workbooks, superseded inputs or figures
         missing += [rel_root(raw(key)) for key in RAW_IN if not raw(key).is_file()]
         missing += [rel_root(superseded(key)) for key in SUPERSEDED if not superseded(key).is_file()]
+        missing += [rel_root(superseded_figure(key, ext)) for key in SUPERSEDED_FIGURES for ext in FIG_EXTS
+                    if not superseded_figure(key, ext).is_file()]
     if is_deposit():
         print(f"public repository ({DEPOSIT_MARKER} found): the licensed table is supplied by the user")
     print(f"registered inputs missing on disk: {len(missing)}")
