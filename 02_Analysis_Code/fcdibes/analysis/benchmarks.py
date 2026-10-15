@@ -31,6 +31,12 @@ each case on two bases, both escalated from the source dollar year to TARGET_DOL
    the electrocoagulation case) recovered undiscounted over the remaining plant life, plus operating costs. This
    reproduces the levelized cost the source reports for electrocoagulation (checked, FGD_CHECK_TOLERANCE).
 
+A case whose operating costs the source estimated on another total plant cost (FGD_OM_BASIS: the case with NETL's
+1.5 equipment factor, whose operating costs Dombrowski et al. estimated on the plant cost without it) has the items the
+source ties to total plant cost scaled to its own: maintenance labor, administration (a fraction of operating and
+maintenance labor) and property tax and insurance (fixed), maintenance materials (variable), at the source's rates
+(FGD_OM_RATES, design-basis rows; v02 of the input, the owner's decision of 2026-10-15).
+
 The auxiliary electricity of each case is not in the source's operating costs; it is reported separately, priced at
 the model's electricity price. The municipal nitrate-removal costs above (Jensen et al. 2014) are kept for context.
 
@@ -156,7 +162,12 @@ FGD_DESIGN_CASE = "design_basis"
 FGD_ROLES = ("basis", "conventional", "emerging")
 FGD_DESIGN_PARAMETERS = ("plant net output", "design purge flow", "capacity factor", "remaining plant life")
 FGD_CASE_PARAMETERS = ("total plant cost", "fixed operating cost", "variable operating cost", "auxiliary power")
+FGD_OM_BASIS = "operating cost basis plant cost"
+FGD_OM_RATES = ("maintenance labor rate", "administration rate", "property tax and insurance rate",
+                "maintenance materials rate")
 FGD_UNITS = {"plant net output": "MWe", "design purge flow": "gal/min", "capacity factor": "fraction",
+             FGD_OM_BASIS: "USD", "maintenance labor rate": "1/yr", "administration rate": "fraction",
+             "property tax and insurance rate": "1/yr", "maintenance materials rate": "1/yr",
              "remaining plant life": "yr", "total plant cost": "USD", "total as-spent capital": "USD",
              "fixed operating cost": "USD/yr", "variable operating cost": "USD/yr", "auxiliary power": "kW",
              "reported levelized cost": "USD/m3"}
@@ -205,7 +216,15 @@ def fgd_cost_table(p: Parameters, data_dir: Path | None = None) -> pd.DataFrame:
         technology, role, year = meta[case]
         factor = cpi[TARGET_DOLLAR_YEAR] / cpi[year]
         tpc = values["total plant cost"]
-        om = values["fixed operating cost"] + values["variable operating cost"]
+        fixed, variable = values["fixed operating cost"], values["variable operating cost"]
+        om_basis = values.get(FGD_OM_BASIS, tpc)
+        if FGD_OM_BASIS in values:
+            # the items the source ties to total plant cost, scaled from the plant cost they were estimated on
+            delta = tpc - om_basis
+            fixed += delta * (design["maintenance labor rate"] * (1 + design["administration rate"])
+                              + design["property tax and insurance rate"])
+            variable += delta * design["maintenance materials rate"]
+        om = fixed + variable
         model_src = (tpc * model_crf + om) / annual_m3
         retrofit_src = (tpc * tasc_ratio / life + om) / annual_m3
         reported = values.get("reported levelized cost", float("nan"))
@@ -221,7 +240,10 @@ def fgd_cost_table(p: Parameters, data_dir: Path | None = None) -> pd.DataFrame:
             "design_flow_m3hr": flow_m3hr, "capacity_factor": design["capacity factor"], "annual_flow_m3": annual_m3,
             "remaining_life_yr": life, "total_plant_cost_usd": tpc, "tasc_to_tpc": tasc_ratio,
             "total_as_spent_capital_usd": tpc * tasc_ratio,
-            "fixed_om_usd_yr": values["fixed operating cost"], "variable_om_usd_yr": values["variable operating cost"],
+            "fixed_om_usd_yr": fixed, "variable_om_usd_yr": variable,
+            "fixed_om_as_reported_usd_yr": values["fixed operating cost"],
+            "variable_om_as_reported_usd_yr": values["variable operating cost"],
+            "om_basis_plant_cost_usd": om_basis,
             "model_crf": model_crf,
             "lcot_model_basis_usd_m3_source_year": model_src,
             "lcot_model_basis_usd_m3": model_src * factor,

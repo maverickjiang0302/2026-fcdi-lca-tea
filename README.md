@@ -42,7 +42,7 @@ values and, for the tables, four provenance columns.
 | Scenario definitions (D06) | `LCA-FCDI_D06_Reference_ScenarioDefinitions_v03.yaml` | S18 (and S26) |
 | Monte Carlo distributions (D07) | `LCA-FCDI_D07_Reference_UncertaintyDistributions_v03.csv` | S19 |
 | Sampling settings (D07) | `LCA-FCDI_D07_Reference_SamplingSettings_v01.csv` | - |
-| FGD wastewater treatment benchmarks: NETL design basis and costed cases (D08) | `LCA-FCDI_D08_Reference_FGDTreatmentBenchmarks_v01.csv` | S23a (input of) |
+| FGD wastewater treatment benchmarks: NETL design basis and costed cases (D08) | `LCA-FCDI_D08_Reference_FGDTreatmentBenchmarks_v02.csv` | S23a (input of) |
 | Municipal nitrate-removal costs, as reported (D08; context) | `LCA-FCDI_D08_Reference_SeTreatmentBenchmarks_v02.csv` | S23b (input of) |
 | Consumer price index CPI-U, annual averages (D08) | `LCA-FCDI_D08_Reference_CPIU_v02.csv` | S23 (input of) |
 | Published LCA / TEA values compared with this work (D08) | `LCA-FCDI_D08_Reference_LiteratureBenchmarks_v02.csv` | S28 |
