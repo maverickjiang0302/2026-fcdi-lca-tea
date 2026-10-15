@@ -203,6 +203,22 @@ def cost_targets(band: pd.DataFrame) -> list[Target]:
     return targets
 
 
+def fgd_cost_targets(fgd: pd.DataFrame) -> list[Target]:
+    """One cost break-even per FGD benchmark case (2026-10-15), on its model-basis levelized cost (Table 1), most
+    expensive first. Names are 'cost_fgd_<case>'; the labels are the cases' technology texts."""
+    targets = []
+    for row in fgd.sort_values("lcot_model_basis_usd_m3", ascending=False).itertuples():
+        targets.append(Target(
+            name="cost_fgd_" + str(row.case),
+            label=str(row.technology),
+            response="lcot_usd_m3",
+            value=float(row.lcot_model_basis_usd_m3),
+            unit="USD/m3",
+            levels_off=False,
+        ))
+    return targets
+
+
 def impact_targets() -> list[Target]:
     """Life-cycle break-evens.
 

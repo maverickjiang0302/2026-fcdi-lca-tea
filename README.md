@@ -1,8 +1,10 @@
 # FCDI-BES life-cycle and techno-economic assessment: input data and calculation code
 
-Input data and Python code behind the article *"Areal selenium productivity sets improvement targets for
-integrated FCDI-BES: a prospective LCA-TEA"* (Riveros, Mostofifar and Jiang, The University of Alabama; the full
-reference is added on publication).
+Input data and Python code behind the article *"Areal productivity sets improvement targets for
+microbial-electrochemical water technologies: a prospective LCA-TEA for selenium treatment"* (Riveros, Mostofifar and
+Jiang, The University of Alabama; the full reference is added on publication). The repository holds the non-licensed
+input data and the Python code that performs the calculations, nothing else: no figures, no plotting code, no
+document-writing code and no ecoinvent data.
 
 **Repository:** https://github.com/maverickjiang0302/2026-fcdi-lca-tea. **Archive:** Zenodo,
 https://doi.org/10.5281/zenodo.23201433 (concept DOI: all versions, resolving to the latest); every GitHub release is
@@ -40,8 +42,9 @@ values and, for the tables, four provenance columns.
 | Scenario definitions (D06) | `LCA-FCDI_D06_Reference_ScenarioDefinitions_v03.yaml` | S18 (and S26) |
 | Monte Carlo distributions (D07) | `LCA-FCDI_D07_Reference_UncertaintyDistributions_v03.csv` | S19 |
 | Sampling settings (D07) | `LCA-FCDI_D07_Reference_SamplingSettings_v01.csv` | - |
-| Benchmark treatment costs, as reported (D08) | `LCA-FCDI_D08_Reference_SeTreatmentBenchmarks_v02.csv` | S23 (input of) |
-| Consumer price index CPI-U, annual averages (D08) | `LCA-FCDI_D08_Reference_CPIU_v01.csv` | S23 (input of) |
+| FGD wastewater treatment benchmarks: NETL design basis and costed cases (D08) | `LCA-FCDI_D08_Reference_FGDTreatmentBenchmarks_v01.csv` | S23a (input of) |
+| Municipal nitrate-removal costs, as reported (D08; context) | `LCA-FCDI_D08_Reference_SeTreatmentBenchmarks_v02.csv` | S23b (input of) |
+| Consumer price index CPI-U, annual averages (D08) | `LCA-FCDI_D08_Reference_CPIU_v02.csv` | S23 (input of) |
 | Published LCA / TEA values compared with this work (D08) | `LCA-FCDI_D08_Reference_LiteratureBenchmarks_v02.csv` | S28 |
 | Stack and scale-up loss ledger (D09) | `LCA-FCDI_D09_Reference_ScaleUpLossLedger_v02.csv` | S27 (input of) |
 | Factor template (D01, public) | `LCA-FCDI_D01_Reference_TRACIFactorsTemplate_v01.csv` | - |
@@ -52,8 +55,10 @@ values and, for the tables, four provenance columns.
   TRACI 2.1 impact category, naming the ecoinvent activity, reference product, location, reference amount and unit.
   Its `value` column is blank. The **dummy** table has the same rows with every value 1.0. The **flow dictionary**
   lists each flow once, with the provider process. None of these files holds an ecoinvent value.
-- SI Table S23 is computed from the benchmark input (the costs as reported, 2010 US dollars per 1000 gallons) and
-  the CPI-U table by the code (it is a result); both inputs are shared. SI Tables S29 and S30 (the harmonized
+- SI Table S23 is computed by the code (it is a result) from three shared inputs: (a) the FGD wastewater treatment
+  benchmarks (the DOE/NETL design basis and the cases costed on it, 2018 US dollars, as restated by Dombrowski et al.
+  2020), the comparison of the article's Table 1; (b) the municipal nitrate-removal costs (2010 US dollars per 1000
+  gallons), kept for context; and the CPI-U table. SI Tables S29 and S30 (the harmonized
   comparison and the comparable-metric table) and the computed column of Table S27 (the loss ledger) are results as
   well; their inputs are shared.
 
@@ -62,9 +67,12 @@ values and, for the tables, four provenance columns.
 - `fcdibes/`: the model (unit operations, flowsheet, inventory, TEA, LCA), the data layer (`datalayer.py`, the
   registry of every folder, file name and version) and the input validation (`validation.py`);
 - `fcdibes/analysis/`: one-at-a-time sensitivity, Monte Carlo, flowrate scaling, the two-dimensional scale grids,
-  benchmarks (with the harmonized literature comparison), break-even targets, the four measured operating points
+  benchmarks (the FGD wastewater treatment benchmarks on the model basis and the source's retrofit convention, the
+  municipal costs, and the harmonized literature comparison), break-even targets, the four measured operating points
   (`conditions.py`) and the stack and scale-up loss ledger (`ledger.py`);
-- `LCA-FCDI_D01-D08_RunAll.py`: the runner, which validates the inputs and runs every analysis in order.
+- `LCA-FCDI_D01-D08_RunAll.py`: the runner, which validates the inputs and runs every analysis in order. It holds calculation code
+  only: the figures are drawn by a project-only script that is not part of this repository, and the runner names that
+  step as skipped.
 
 **Repository files:** `README.md`, `LICENSE` (code), `LICENSE-DATA` (data), `CITATION.cff`, `requirements.txt`,
 `.gitignore`, `.gitattributes`, and `DEPOSIT_MANIFEST.csv` (path, size and SHA-256 of every other file; its presence
@@ -79,7 +87,7 @@ tells the code that it runs in the public repository).
 - **Result files of any kind** (per-scenario tables, KPIs, sensitivity, Monte Carlo, scaling, grids, break-even).
   Flow-level contributions divide back into the factors, and scenario, Monte Carlo, grid and sensitivity results
   supply enough equations to solve for them, so no result file is published. The results are reported in the
-  article and its SI; the code regenerates every file (243 tables) into `01_Data/02_Processed/`, which is git-ignored.
+  article and its SI; the code regenerates every file (244 tables) into `01_Data/02_Processed/`, which is git-ignored.
 - **The source workbooks** of the authors: they contain ecoinvent-derived sheets. The inputs above were transcribed
   from them (the licensed factors excepted).
 - **The figures, the scripts that draw them, the scripts that write the manuscript and the SI, the tests and the
@@ -102,8 +110,8 @@ LCA_FCDI_FACTORS=dummy python LCA-FCDI_D01-D08_RunAll.py
 
 (PowerShell: `$env:LCA_FCDI_FACTORS = "dummy"`, then `python LCA-FCDI_D01-D08_RunAll.py`.) The results go to
 `01_Data/02_Processed/dummy_run/`. The following results do not depend on the factors and are reproduced byte for byte
-(176 of the 243 tables, checked when this repository was built): for every scenario and configuration
-the tables `capex`, `lca_inventory`, `opex`, `power`, `reactor_capex`, `streams`, `tea_capital`, `tea_com`, `tea_metrics`; the benchmark table; the Monte Carlo draws, summaries and
+(177 of the 244 tables, checked when this repository was built): for every scenario and configuration
+the tables `capex`, `lca_inventory`, `opex`, `power`, `reactor_capex`, `streams`, `tea_capital`, `tea_com`, `tea_metrics`; the two benchmark tables; the Monte Carlo draws, summaries and
 correlations (they sample TEA quantities only); the scaling band; and the two break-even crossing tables. The other
 tables (KPIs, LCA impacts and contributions, sensitivity, scaling baseline, grids, break-even targets) contain LCA
 columns or rows; their TEA columns and rows are exact as well.
@@ -127,7 +135,7 @@ do.
    `LCA_FCDI_FACTORS=<path of your table>`: the results go to `01_Data/02_Processed/altfactors_run/`.
 5. `python -m fcdibes.validation` checks the table (and every other input) on its own.
 
-With the authors' factor table this run reproduces all 243 result tables of the authors' run byte for byte
+With the authors' factor table this run reproduces all 244 result tables of the authors' run byte for byte
 (checked when this repository was built). With factors computed in other software or database versions the LCA numbers
 follow your factors.
 
@@ -136,7 +144,7 @@ the licensed table at its registered path, `dummy_run/` with `LCA_FCDI_FACTORS=d
 another table; in the last two cases it overwrites the files a full run left in that folder. `--jobs N` sets the
 number of worker processes (default: all cores). `--verify` rebuilds everything into `verify_run/` folders and
 compares each file with the one in `01_Data/02_Processed/`; this repository commits no results, so on a fresh clone without
-outputs it prints `VERIFY PASSED: 0 regenerated files identical ...; 243 not compared` and exits 0, and after a
+outputs it prints `VERIFY PASSED: 0 regenerated files identical ...; 244 not compared` and exits 0, and after a
 run with your own table it compares with that run's files (the `verify_run/` folders it leaves are git-ignored).
 Environment variables `LCA_FCDI_OUTDIR` and
 `LCA_FCDI_FIGOUT` choose other output folders. The runner skips, and names, the project-only steps: the figures

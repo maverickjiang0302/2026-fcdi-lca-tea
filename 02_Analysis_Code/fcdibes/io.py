@@ -276,6 +276,14 @@ def load_cpi(data_dir: Path | None = None) -> dict:
     return out
 
 
+def load_fgd_benchmarks(data_dir: Path | None = None) -> pd.DataFrame:
+    """The FGD treatment benchmark table (D08, 2026-10-15) as read: one row per (case, parameter); value numeric,
+    text columns with blank cells as ''."""
+    frame = dl.read_csv(_input("fgd_benchmarks", data_dir), keep_default_na=False, dtype=str)
+    frame["value"] = pd.to_numeric(frame["value"])
+    return frame
+
+
 def load_cpi_table(data_dir: Path | None = None) -> pd.DataFrame:
     """The CPI-U table as read (every column, provenance included), for the SI and the reports."""
     return dl.read_csv(_input("cpi", data_dir))

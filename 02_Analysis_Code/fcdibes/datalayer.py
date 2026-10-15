@@ -304,7 +304,8 @@ IN = dict(
     factors_dummy="LCA-FCDI_D01_Reference_TRACIFactorsDummy_v01.csv",            # public, 270 rows, factor 1.0
     flows="LCA-FCDI_D01_Reference_FlowDictionary_v01.csv",                       # validation only
     sampling="LCA-FCDI_D07_Reference_SamplingSettings_v01.csv",
-    cpi="LCA-FCDI_D08_Reference_CPIU_v01.csv",                                   # Phase 3: CPI-U (BLS CUUR0000SA0)
+    cpi="LCA-FCDI_D08_Reference_CPIU_v02.csv",                                   # v02 2026-10-15: + 2018 (FGD benchmarks)
+    fgd_benchmarks="LCA-FCDI_D08_Reference_FGDTreatmentBenchmarks_v01.csv",      # 2026-10-15: NETL design basis (Table 1)
     literature_benchmarks="LCA-FCDI_D08_Reference_LiteratureBenchmarks_v02.csv",  # v02 2026-10-06: full texts confirmed
     scaleup_ledger="LCA-FCDI_D09_Reference_ScaleUpLossLedger_v02.csv",           # v02 2026-10-06: evidence texts confirmed
 )
@@ -342,12 +343,15 @@ SUPERSEDED = dict(
     uncertainty_v02="LCA-FCDI_D07_Reference_UncertaintyDistributions_v02.csv",        # retention / shunt rows: sweep statements
     literature_benchmarks_v01="LCA-FCDI_D08_Reference_LiteratureBenchmarks_v01.csv",  # abstracts only; [UNCONFIRMED] rows
     scaleup_ledger_v01="LCA-FCDI_D09_Reference_ScaleUpLossLedger_v01.csv",            # five rows with [UNCONFIRMED] evidence
+    # Benchmark replacement (2026-10-15): v02 adds the 2018 annual average (the dollar year of the FGD benchmarks)
+    cpi_v01="LCA-FCDI_D08_Reference_CPIU_v01.csv",                                    # 2010-2026 without 2018
 )
 SUPERSEDED_BY = dict(scenarios_v01="scenarios", equipment_general_v01="equipment_general",
                      process_assumptions_v01="process_assumptions", scenarios_v02="scenarios",
                      uncertainty_v01="uncertainty", benchmarks_v01="benchmarks",
                      process_assumptions_v02="process_assumptions", uncertainty_v02="uncertainty",
-                     literature_benchmarks_v01="literature_benchmarks", scaleup_ledger_v01="scaleup_ledger")
+                     literature_benchmarks_v01="literature_benchmarks", scaleup_ledger_v01="scaleup_ledger",
+                     cpi_v01="cpi")
 
 RAW_IN = dict(
     inputs="LCA-FCDI_D01-D08_2026-04-10_InputsWorkbook.xlsx",
@@ -366,6 +370,7 @@ OUT = dict(
     scenario_kpis="LCA-FCDI_D01-D06_Processed_ScenarioKPIs_v01.csv",
     golden_kpis="LCA-FCDI_D01-D06_Processed_GoldenKPIs_v01.json",
     benchmarks="LCA-FCDI_D02-D08_Processed_Benchmarks_v01.csv",
+    fgd_benchmarks="LCA-FCDI_D02-D08_Processed_FGDBenchmarks_v01.csv",           # 2026-10-15: Table 1, SI Table S23
     sensitivity=lambda recovery: f"LCA-FCDI_D01-D06_Processed_Sensitivity{_with_no(recovery)}Recovery_v01.csv",
     monte_carlo=lambda dist, recovery: ("LCA-FCDI_D02-D07_Processed_MonteCarlo"
                                         f"{_camel(_DIST_CAMEL, dist, 'distribution')}{_with_no(recovery)}Recovery_v01.csv"),
@@ -449,18 +454,25 @@ def si_figure_keys() -> list:
     return [key for key, (fig_id, _r, _d) in FIG.items() if fig_id.startswith(SI_FIGURE_PREFIX)]
 
 # ---------------------------------------------------------------------------------------------- documents
-MANUSCRIPT_VERSION = "v08"                  # v08 (2026-10-06): the owner's answers to the v07 queries (abstract wording,
+MANUSCRIPT_VERSION = "v11"                  # v11 (2026-10-15): the owner's v10 (Journal of Cleaner Production; FGD
+                                            # benchmarks) with the model's numbers; v09-v10 were written outside this
+                                            # workflow (03_Manuscript/01_Drafts/LCA-FCDI_Manuscript_v10_*.docx).
+                                            # v08 (2026-10-06): the owner's answers to the v07 queries (abstract wording,
                                             # citations, CRediT statement, Zenodo DOI); v07 editorial revision (Figs. 5-6
                                             # merged, Table 3 moved to SI Table S26, Water Research references, US spelling)
-SI_VERSION = "v08"                          # v08 (2026-10-06): the owner's Word edits of SI v07 and the audit fixes;
+SI_VERSION = "v09"                          # v09 (2026-10-15): the FGD benchmarks (Tables S23-S25), the v11 title;
+                                            # v08 (2026-10-06): the owner's Word edits of SI v07 and the audit fixes;
                                             # v07 (editorial revision), v06, v05 (Phase 3) and v01-v04 stay
 _DOC_VERSIONED = dict(manuscript="LCA-FCDI_Manuscript_{v}.docx", si="LCA-FCDI_SI_{v}.docx")
-DOC_VERSIONS = dict(manuscript=("v01", "v02", "v03", "v04", "v05", "v06", "v07", MANUSCRIPT_VERSION),
-                    si=("v01", "v02", "v03", "v04", "v05", "v06", "v07", SI_VERSION))
+DOC_VERSIONS = dict(manuscript=("v01", "v02", "v03", "v04", "v05", "v06", "v07", "v08", MANUSCRIPT_VERSION),
+                    si=("v01", "v02", "v03", "v04", "v05", "v06", "v07", "v08", SI_VERSION))
 DOC = dict(
     manuscript=_DOC_VERSIONED["manuscript"].format(v=MANUSCRIPT_VERSION),
     si=_DOC_VERSIONED["si"].format(v=SI_VERSION),
-    reference_list="LCA-FCDI_Manuscript_ReferenceList_v06.json",                 # v06 (SI v08): SI cited_in updated;
+    reference_list="LCA-FCDI_Manuscript_ReferenceList_v07.json",                 # v07 (2026-10-15): NETL 2019 and
+                                                                                 # Dombrowski et al. 2020 added; cited_in of
+                                                                                 # manuscript v11 and SI v09;
+                                                                                 # v06 (SI v08): SI cited_in updated;
                                                                                  # v05 (manuscript v08): cited_in updated;
                                                                                  # v04 2026-10-06: structured entries, Water
                                                                                  # Research (Elsevier Harvard) style; v03: ACS
@@ -475,7 +487,12 @@ DOC = dict(
     documents_v07="LCA-FCDI_Report_DocumentsV07_v01.md",                        # editorial revision v07 (2026-10-06)
     documents_v08="LCA-FCDI_Report_DocumentsV08_v01.md",                        # manuscript v08 (2026-10-06)
     documents_si_v08="LCA-FCDI_Report_SupplementaryMaterialV08_v01.md",         # SI v08 and the release (2026-10-06)
-    highlights="LCA-FCDI_Highlights_v01.docx",                                  # v08: written by the manuscript builder
+    documents_v09="LCA-FCDI_Report_DocumentsV09_v01.md",                        # v09 style revision (2026-10-15, owner)
+    documents_v10="LCA-FCDI_Report_DocumentsV10_v01.md",                        # v10 benchmark replacement (owner)
+    documents_v11="LCA-FCDI_Report_DocumentsV11_v01.md",                        # v11 / SI v09 / release v1.1.0
+    highlights="LCA-FCDI_Highlights_v02.docx",                                  # v02 (2026-10-15): the FGD benchmark
+                                                                                 # result; v01 is the owner's edited file
+                                                                                 # v08: written by the manuscript builder
                                                                                  # from the prose module's HIGHLIGHTS
     graphical_abstract="LCA-FCDI_GraphicalAbstract_v01.png",                     # owner-made asset (2026-10-06), not
                                                                                  # generated by any script, not embedded
@@ -487,7 +504,7 @@ DOC_LOCATION = dict(
     data_dictionary=PROJDOC_DIR, model_notes=PROJDOC_DIR, publishing=PROJDOC_DIR,
     discovery_report=PROJDOC_DIR, verification_report=PROJDOC_DIR, data_sharing=PROJDOC_DIR,
     science_revision=PROJDOC_DIR, documents_v06=PROJDOC_DIR, documents_v07=PROJDOC_DIR, documents_v08=PROJDOC_DIR,
-    documents_si_v08=PROJDOC_DIR,
+    documents_si_v08=PROJDOC_DIR, documents_v09=PROJDOC_DIR, documents_v10=PROJDOC_DIR, documents_v11=PROJDOC_DIR,
     legend=DATA_DIR,
     crosswalk=MANUSCRIPT_DIR,
 )
@@ -499,6 +516,8 @@ DOC_SUPERSEDED = dict(
     reference_list_v03=("reference_list", "LCA-FCDI_Manuscript_ReferenceList_v03.json"),   # ACS strings; v04 restructures
     reference_list_v04=("reference_list", "LCA-FCDI_Manuscript_ReferenceList_v04.json"),   # v07 citations; v05 for v08
     reference_list_v05=("reference_list", "LCA-FCDI_Manuscript_ReferenceList_v05.json"),   # manuscript v08; v06 for SI v08
+    reference_list_v06=("reference_list", "LCA-FCDI_Manuscript_ReferenceList_v06.json"),   # SI v08; v07 for v11 / SI v09
+    highlights_v01=("highlights", "LCA-FCDI_Highlights_v01.docx"),                        # the owner's Word-edited file
     data_dictionary_v01=("data_dictionary", "LCA-FCDI_D01-D08_Guide_DataDictionary_v01.md"),
     model_notes_v01=("model_notes", "LCA-FCDI_D01-D08_Report_ModelNotes_v01.md"),
 )
@@ -506,6 +525,7 @@ DOC_SUPERSEDED = dict(
 # ---------------------------------------------------------------------------------------------- code and repo files
 CODE = dict(
     run_all="LCA-FCDI_D01-D08_RunAll.py",
+    make_figures="LCA-FCDI_D01-D08_MakeFigures.py",                               # 2026-10-15: step 7, project-only
     make_manuscript="LCA-FCDI_D01-D08_MakeManuscript.py",
     make_si="LCA-FCDI_D01-D08_MakeSIDocx.py",
     manuscript_text="LCA-FCDI_D01-D08_ManuscriptText.py",
@@ -543,7 +563,9 @@ REPO = dict(
 # declared_text_substitutions.csv and the project's README, pyproject, pytest.ini and environment.yml (the deposit
 # builder writes the public repository's own README, LICENSE-DATA, CITATION.cff, requirements.txt, .gitignore and
 # .gitattributes; LICENSE is the project's MIT text unchanged).
-DEPOSIT_VERSION = "v07"                   # v07 (2026-10-06, SI v08): the registry constants of SI v08 and reference list
+DEPOSIT_VERSION = "v08"                   # v08 (2026-10-15): the FGD benchmarks (input, CPI-U v02, benchmark and target
+                                          # code), RunAll without figure code (MakeFigures is project-only); release v1.1.0.
+                                          # v07 (2026-10-06, SI v08): the registry constants of SI v08 and reference list
                                           # v06; the Zenodo concept DOI in README and CITATION.cff (GitHub release v1.0.2).
                                           # v06 (2026-10-06, manuscript v08): CITATION.cff loadable by Zenodo (one license
                                           # string, repository-code, abstract), README with the repository URL and the
@@ -561,7 +583,8 @@ DEPOSIT = dict(
     inputs=("unit_conversions", "influent", "process_assumptions", "materials", "equipment_general", "tea_inputs",
             "prices", "pumps", "centrifuges", "screens", "ec_mixers", "electrocultivation", "foreground_processes",
             "normalization", "electron_partitioning", "scenarios", "uncertainty", "sampling", "benchmarks",
-            "factors_template", "factors_dummy", "flows", "cpi", "literature_benchmarks", "scaleup_ledger"),
+            "factors_template", "factors_dummy", "flows", "cpi", "literature_benchmarks", "scaleup_ledger",
+            "fgd_benchmarks"),
     package=("fcdibes/__init__.py", "fcdibes/config.py", "fcdibes/correlations.py", "fcdibes/datalayer.py",
              "fcdibes/inventory.py", "fcdibes/io.py", "fcdibes/lca.py", "fcdibes/model.py", "fcdibes/params.py",
              "fcdibes/streams.py", "fcdibes/system.py", "fcdibes/tea.py", "fcdibes/unitops.py", "fcdibes/validation.py",
@@ -958,7 +981,7 @@ def expected_outputs(scenarios=SCENARIOS, include_alt_grids: bool = True) -> lis
              for s in scenarios for r in (True, False) for t in SCENARIO_TABLES]
     names += [out_name("scenario_kpis"), out_name("golden_kpis")]
     names += [out_name("conditions"), out_name("loss_ledger")]                         # Phase 3, steps 1b and 1c
-    names += [out_name("benchmarks")]
+    names += [out_name("benchmarks"), out_name("fgd_benchmarks")]
     names += [out_name(k) for k in ("literature_harmonized",) if not output_is_pending(k)]   # Phase 3, step 2b
     names += [out_name("sensitivity", r) for r in (True, False)]
     for dist in DISTRIBUTIONS:
@@ -978,8 +1001,9 @@ def expected_figures() -> list:
 
 
 def figure_code_present() -> bool:
-    """True when the figure package is in this copy (it is project-only: a public clone has none)."""
-    return (CODE_DIR / FIGURES_PACKAGE / "__init__.py").is_file()
+    """True when the figure code is in this copy: the figure package and the figure script (2026-10-15) are both
+    project-only, so a public clone has neither."""
+    return (CODE_DIR / FIGURES_PACKAGE / "__init__.py").is_file() and code_file("make_figures").is_file()
 
 
 # ---------------------------------------------------------------------------------------------- public repository

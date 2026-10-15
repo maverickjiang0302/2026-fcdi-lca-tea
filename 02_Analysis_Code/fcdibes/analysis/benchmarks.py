@@ -16,6 +16,24 @@ puts them on the model basis in two explicit steps:
    (10% over 30 years) to the source's (7% over 16 years); operating cost is already an annual flow. The two factors
    differ by 0.2%, so the correction is negligible, but it is applied explicitly rather than assumed away.
 
+FGD wastewater treatment benchmarks (2026-10-15; Table 1, SI Table S23)
+-----------------------------------------------------------------------
+The service-equivalent comparison: treatment trains costed for the same FGD wastewater purge at comparable scale, on
+the design basis that the U.S. DOE/NETL developed for retrofitting wet-FGD wastewater treatment to an existing 650 MWe
+plant (57 gal/min at 85% capacity factor, 10-year remaining life, 2018 USD), as restated by Dombrowski et al. (2020):
+chemical precipitation + biological treatment (NETL Case 1, the 2015 effluent-guideline BAT; total plant cost as
+reported and without NETL's +50% equipment adder) and an electrocoagulation concept (emerging). fgd_cost_table() puts
+each case on two bases, both escalated from the source dollar year to TARGET_DOLLAR_YEAR with the CPI-U:
+
+1. the model basis: total plant cost annualized with the model's capital recovery factor (10% over 30 years) plus the
+   fixed and variable operating costs, per m3 of the annual design flow (SI Eq. S62 for the FGD cases);
+2. the source's retrofit convention: total as-spent capital (TASC = TPC x the TASC/TPC ratio the source reports for
+   the electrocoagulation case) recovered undiscounted over the remaining plant life, plus operating costs. This
+   reproduces the levelized cost the source reports for electrocoagulation (checked, FGD_CHECK_TOLERANCE).
+
+The auxiliary electricity of each case is not in the source's operating costs; it is reported separately, priced at
+the model's electricity price. The municipal nitrate-removal costs above (Jensen et al. 2014) are kept for context.
+
 Literature benchmarks (DESIGN_phase3 section 3.6)
 -------------------------------------------------
 harmonize_literature() copies the published values of the literature table with the adjustments recorded there (the
@@ -131,6 +149,95 @@ def target_range(p: Parameters, data_dir: Path | None = None) -> tuple:
     band = total_cost_band(p, data_dir)
     means = band["mean_usd_m3"].dropna()
     return float(means.min()), float(means.max())
+
+
+# ---------------------------------------------------------------------------------------------- FGD (2026-10-15)
+FGD_DESIGN_CASE = "design_basis"
+FGD_ROLES = ("basis", "conventional", "emerging")
+FGD_DESIGN_PARAMETERS = ("plant net output", "design purge flow", "capacity factor", "remaining plant life")
+FGD_CASE_PARAMETERS = ("total plant cost", "fixed operating cost", "variable operating cost", "auxiliary power")
+FGD_UNITS = {"plant net output": "MWe", "design purge flow": "gal/min", "capacity factor": "fraction",
+             "remaining plant life": "yr", "total plant cost": "USD", "total as-spent capital": "USD",
+             "fixed operating cost": "USD/yr", "variable operating cost": "USD/yr", "auxiliary power": "kW",
+             "reported levelized cost": "USD/m3"}
+FGD_TASC_CASE = "electrocoagulation"     # the case whose total as-spent capital the source reports (TASC/TPC ratio)
+FGD_CHECK_TOLERANCE = 0.001              # relative: the retrofit convention must reproduce a reported levelized cost
+#: the municipal benchmark kept as a reference line (the LCOT surfaces of Fig. 4, Table S24; SI Table S23 for context)
+REFERENCE_LINE_TECHNOLOGY = "Reverse Osmosis"
+
+
+def fgd_inputs(data_dir: Path | None = None) -> tuple:
+    """(design basis {parameter: value}, {case: {parameter: value}}, {case: (technology, role, dollar year)}) of the
+    FGD benchmark table, cases in table order; a case's dollar year is that of its cost rows (one per case)."""
+    frame = io.load_fgd_benchmarks(data_dir)
+    design, cases, meta = {}, {}, {}
+    for row in frame.itertuples():
+        if row.case == FGD_DESIGN_CASE:
+            design[row.parameter] = float(row.value)
+            continue
+        cases.setdefault(row.case, {})[row.parameter] = float(row.value)
+        technology, role, year = meta.get(row.case, (row.technology, row.role, None))
+        if str(row.dollar_year).strip():
+            if year is not None and int(row.dollar_year) != year:
+                raise ValueError(f"FGD benchmark case {row.case!r} has cost rows in more than one dollar year")
+            year = int(row.dollar_year)
+        meta[row.case] = (technology, role, year)
+    return design, cases, meta
+
+
+def fgd_cost_table(p: Parameters, data_dir: Path | None = None) -> pd.DataFrame:
+    """One row per FGD benchmark case: the inputs, the annual design flow, both levelized costs in the source dollar
+    year and in TARGET_DOLLAR_YEAR (model basis and retrofit convention), and the auxiliary electricity. Raises
+    ValueError when the retrofit convention does not reproduce a levelized cost the source reports."""
+    design, cases, meta = fgd_inputs(data_dir)
+    cpi = io.load_cpi(data_dir)
+    m3_per_gal = p.UC["1 gal"] / p.UC["1 m3"]
+    hours_per_year = p.UC["1 year to day"] * 24
+    flow_m3hr = design["design purge flow"] * m3_per_gal * 60
+    annual_m3 = flow_m3hr * hours_per_year * design["capacity factor"]
+    life = design["remaining plant life"]
+    tasc_case = cases[FGD_TASC_CASE]
+    tasc_ratio = tasc_case["total as-spent capital"] / tasc_case["total plant cost"]
+    model_crf = capital_recovery_factor(p.TEA["Interest Rate"], p.TEA["Plant lifetime"])
+    electricity_price = p.PRICE["Electricity Price"]
+    rows = []
+    for case, values in cases.items():
+        technology, role, year = meta[case]
+        factor = cpi[TARGET_DOLLAR_YEAR] / cpi[year]
+        tpc = values["total plant cost"]
+        om = values["fixed operating cost"] + values["variable operating cost"]
+        model_src = (tpc * model_crf + om) / annual_m3
+        retrofit_src = (tpc * tasc_ratio / life + om) / annual_m3
+        reported = values.get("reported levelized cost", float("nan"))
+        if math.isfinite(reported) and abs(retrofit_src / reported - 1) > FGD_CHECK_TOLERANCE:
+            raise ValueError(f"FGD benchmark {case!r}: the retrofit convention gives {retrofit_src:.4f} USD/m3 "
+                             f"({year} USD), the source reports {reported:.4f}")
+        kwh_m3 = values["auxiliary power"] / flow_m3hr
+        rows.append({
+            "case": case, "technology": technology, "role": role, "dollar_year": year,
+            "target_dollar_year": TARGET_DOLLAR_YEAR, "cpi_base": cpi[year], "cpi_target": cpi[TARGET_DOLLAR_YEAR],
+            "cpi_factor": factor,
+            "plant_net_output_MWe": design["plant net output"], "design_flow_gpm": design["design purge flow"],
+            "design_flow_m3hr": flow_m3hr, "capacity_factor": design["capacity factor"], "annual_flow_m3": annual_m3,
+            "remaining_life_yr": life, "total_plant_cost_usd": tpc, "tasc_to_tpc": tasc_ratio,
+            "total_as_spent_capital_usd": tpc * tasc_ratio,
+            "fixed_om_usd_yr": values["fixed operating cost"], "variable_om_usd_yr": values["variable operating cost"],
+            "model_crf": model_crf,
+            "lcot_model_basis_usd_m3_source_year": model_src,
+            "lcot_model_basis_usd_m3": model_src * factor,
+            "lcot_retrofit_basis_usd_m3_source_year": retrofit_src,
+            "lcot_retrofit_basis_usd_m3": retrofit_src * factor,
+            "reported_lcot_usd_m3_source_year": reported,
+            "auxiliary_power_kW": values["auxiliary power"], "auxiliary_electricity_kWh_m3": kwh_m3,
+            "auxiliary_electricity_usd_m3": kwh_m3 * electricity_price,
+        })
+    return pd.DataFrame(rows)
+
+
+def fgd_band(table: pd.DataFrame) -> tuple:
+    """(low, high) of the conventional train on the model basis (TARGET_DOLLAR_YEAR USD per m3)."""
+    conventional = table.loc[table["role"] == "conventional", "lcot_model_basis_usd_m3"]
+    return float(conventional.min()), float(conventional.max())
 
 
 # ---------------------------------------------------------------------------------------------- literature (Phase 3)

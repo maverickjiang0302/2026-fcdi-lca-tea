@@ -31,8 +31,9 @@ can be started from any working directory; input validation runs first and stops
 
 The same script runs in the public repository (the deposit built by LCA-FCDI_D01-D08_BuildDeposit.py, recognised by
 DEPOSIT_MANIFEST.csv at its root), which carries the calculation code only:
-  * a step whose code is not in the copy is skipped and named: the figures (step 7, package fcdibes/figures) and the
-    manuscript and SI builders;
+  * a step whose code is not in the copy is skipped and named: the figures (step 7: the script
+    LCA-FCDI_D01-D08_MakeFigures.py and the package fcdibes/figures, both project-only since 2026-10-15, so that this
+    script holds calculation code only) and the manuscript and SI builders;
   * when the licensed factor table is absent and LCA_FCDI_FACTORS is not set, the run stops before any computation
     and says how to proceed (dummy table, or a table built from the public template);
   * --verify in a copy without committed outputs lists every regenerated file as not compared and exits 0.
@@ -222,13 +223,22 @@ def _pipeline(args: argparse.Namespace) -> None:
 
     # -- 2. benchmarks -------------------------------------------------------
     _banner("2. Benchmark technologies")
+    # 2026-10-15: the FGD wastewater treatment trains costed for the same service at comparable scale (Table 1, SI
+    # Table S23) on the NETL design basis; the municipal nitrate-removal costs are kept for context (SI Table S23) and
+    # give the reverse-osmosis reference line
+    fgd = benchmarks.fgd_cost_table(params)
+    dl.write_csv(fgd, dl.out("fgd_benchmarks"))
+    fgd_low, fgd_high = benchmarks.fgd_band(fgd)
+    print(fgd[["case", "role", "lcot_model_basis_usd_m3", "lcot_retrofit_basis_usd_m3", "auxiliary_electricity_usd_m3"]]
+          .to_string(index=False, float_format=lambda v: f"{v:,.3f}"))
+    print(f"\n  conventional FGD band: ${fgd_low:,.2f} - ${fgd_high:,.2f} /m3; the base case is "
+          f"{base.tea.lcot_usd_m3 / fgd_high:,.2f}x to {base.tea.lcot_usd_m3 / fgd_low:,.2f}x the band")
     band = benchmarks.total_cost_band(params)
     dl.write_csv(band, dl.out("benchmarks"))
     low, high = benchmarks.target_range(params)
+    print("\n  municipal nitrate-removal costs (context):")
     print(band.to_string(index=False, float_format=lambda v: f"{v:,.3f}"))
-    print(f"\n  target band: ${low:,.2f} - ${high:,.2f} /m3")
-    print(f"  base case is {base.tea.lcot_usd_m3 / high:,.0f}x the most "
-          f"expensive benchmark, {base.tea.lcot_usd_m3 / low:,.0f}x the cheapest")
+    print(f"  municipal band: ${low:,.2f} - ${high:,.2f} /m3")
 
     # -- 2b. published assessments, harmonized (Phase 3) -------------------
     _banner("2b. Literature benchmarks, harmonized")
@@ -324,7 +334,10 @@ def _pipeline(args: argparse.Namespace) -> None:
     # If the required current density barely moves between a pilot and a
     # full-scale plant, that is the thesis of the paper stated as a number.
     _banner("6b. Break-even targets, resolved into current density")
-    target_list = targets_mod.cost_targets(band) + targets_mod.impact_targets()
+    # 2026-10-15: the FGD benchmarks of Table 1, the municipal reverse-osmosis reference line, the impact targets
+    reference = band[band["technology"] == benchmarks.REFERENCE_LINE_TECHNOLOGY]
+    target_list = (targets_mod.fgd_cost_targets(fgd) + targets_mod.cost_targets(reference)
+                   + targets_mod.impact_targets())
 
     bases = [("pilot", float(frame["flow_m3hr"].min())),
              ("full_scale", float(frame["flow_m3hr"].max()))]
@@ -379,35 +392,15 @@ def _pipeline(args: argparse.Namespace) -> None:
             grid_mod.write(alt, axis_name)
 
     # -- 7. figures ----------------------------------------------------------
+    # Since 2026-10-15 the drawing is the project-only script LCA-FCDI_D01-D08_MakeFigures.py (with the package
+    # fcdibes/figures): this script holds calculation code only and hands the figure step the frames of this run.
     _banner("7. Figures")
     if not dl.figure_code_present():
-        print(f"  not in this copy, skipped: {dl.FIGURES_PACKAGE}/ (step 7, the figures; project-only)", flush=True)
+        print(f"  not in this copy, skipped: {dl.CODE['make_figures']} and {dl.FIGURES_PACKAGE}/ (step 7, the figures; "
+              "project-only)", flush=True)
         return
-    # imported here, not at the top: the figure package is project-only and absent from the public repository
-    from fcdibes.figures import flowsheet as flow_fig
-    from fcdibes.figures import framework as framework_fig
-    from fcdibes.figures import grid as grid_fig
-    from fcdibes.figures import results as res_fig
-    axis_label = frame.attrs["axis_label"]
-    # Documents v07 (2026-10-06): the framework figure is Fig. S1 of the Supplementary Material; the manuscript figures
-    # are the flowsheet (1), the LCA impacts (2), the cost structure (3), scale against performance (4, the GWP and LCOT
-    # surfaces in four panels) and the sensitivity (5); the seven v06 files stay as superseded figures
-    written = list(framework_fig.save(framework_fig.figure(), "figS1_framework"))
-    written += flow_fig.save(flow_fig.figure(), "fig1_flowsheet")
-
-    com = dl.read_csv(dl.scenario_file("base", True, "tea_com"))
-    reactor_capex = dl.read_csv(dl.scenario_file("base", True, "reactor_capex"))
-    sa_frame = dl.read_csv(dl.out("sensitivity", True))
-    contrib = dl.read_csv(dl.scenario_file("base", True, "lca_contributions"))
-    written += res_fig.save(res_fig.lca_figure(kpis, contrib), "fig2_lca_normalized")
-    written += res_fig.save(res_fig.tea_figure(kpis, com, reactor_capex, band), "fig3_cost_structure")
-    # Phase 3: the four measured operating points, at their own flow (the pilot base case) and their areal rate at
-    # scale, both read from the condition table of step 1b; the base case (3V) is the open circle
-    markers = conditions_mod.markers(condition_table, include_recovery=True)
-    written += grid_fig.save(
-        grid_fig.scale_vs_performance_figure(frame, band, axis_label=axis_label, markers=markers),
-        "fig4_scale_vs_performance")
-    written += res_fig.save(res_fig.tornado_figure(sa_frame), "fig5_sensitivity")
+    written = dl.import_script("make_figures").write_all(kpis=kpis, grid=frame, conditions=condition_table, fgd=fgd,
+                                                         municipal=band)
     for path in written:
         print("  " + dl.rel_root(path))
 
